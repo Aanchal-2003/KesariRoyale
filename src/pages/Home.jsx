@@ -1,193 +1,260 @@
 import { useState, useEffect } from 'react';
-
-const testimonials = [
-  { name: 'Arjun Singh', location: 'Jaipur, Rajasthan', quote: 'The aroma reminds me exactly of the ghee my grandmother made in her village kitchen. Its grainy texture and golden hue are signs of absolute purity.' },
-  { name: 'Meera Deshmukh', location: 'Pune, Maharashtra', quote: 'Switching to Kesariroyale A2 Ghee has improved my family\'s digestion significantly. You can taste the difference the traditional Bilona method makes.' },
-  { name: 'Rajesh Varma', location: 'New Delhi, Delhi', quote: 'Finally, a brand that respects the Vedic process. This is the only ghee I trust for my children\'s daily meals. It\'s liquid gold.' },
-];
+import { products } from '../data/products';
+import { useCart } from '../context/CartContext';
 
 const heroSlides = [
-  {
-    image: '/assets/sahiwal_cows.jpg',
-    badge: 'Rajasthan Heritage',
-    icon: 'fa-feather-pointed',
-    title: 'Pure A2 Milk from Native',
-    highlight: 'Sahiwal & Gir Cows',
-    description: 'Our indigenous Sahiwal and Gir cows graze freely on the lush pastures of Hanumangarh, producing the richest A2 milk — the sacred foundation of every drop of Kesariroyale ghee.',
-    cta1Label: 'Shop Now',
-    cta1Page: 'shop',
-    cta2Label: 'Our Story',
-    cta2Page: 'craft',
-  },
-  {
-    image: '/assets/craft_bilona.jpg',
-    badge: 'Ancient Bilona Method',
-    icon: 'fa-arrows-spin',
-    title: 'Hand-Churned with Love by',
-    highlight: 'Village Artisan Women',
-    description: 'Experienced village women churn A2 curd in traditional clay pots using the ancient bi-directional Bilona — extracting the purest butter just as generations have done for centuries.',
-    cta1Label: 'Discover Our Craft',
-    cta1Page: 'craft',
-    cta2Label: 'Shop Ghee',
-    cta2Page: 'shop',
-  },
-  {
-    image: '/assets/ghee_lifestyle.jpg',
-    badge: 'Kesariroyale Premium',
-    icon: 'fa-jar',
-    title: 'Purest A2 Bilona Ghee',
-    highlight: 'Crafted in Rajasthan',
-    description: 'Slow-cooked on controlled flame, hand-churned in clay pots. Unleash the sacred, golden essence of native A2 cows for your family\'s daily wellness.',
-    cta1Label: 'Purchase Now',
-    cta1Page: 'shop',
-    cta2Label: 'Discover Our Craft',
-    cta2Page: 'craft',
-  },
+  { image: '/assets/banner_1.png', alt: 'Shuddhata Ka Waada — Pure A2 Bilona Ghee' },
+  { image: '/assets/banner_2.png', alt: 'From Our Tradition To Your Table' },
+  { image: '/assets/banner_3.png', alt: 'Ghar Ki Rasoi, Maa Ka Pyaar' },
 ];
+
+const whyItems = [
+  { icon: 'fa-cow',         title: 'A2 Gir Cow Milk',        text: 'Sourced from indigenous Gir cows, known for rich nutrition and purity.' },
+  { icon: 'fa-arrows-spin', title: 'Authentic Bilona Method',  text: 'Handcrafted using the ancient Bilona method to retain natural goodness.' },
+  { icon: 'fa-leaf',        title: '100% Natural',            text: 'No additives, no preservatives — just pure, wholesome ghee.' },
+  { icon: 'fa-heart-pulse', title: 'Health & Wellness',       text: 'Rich in essential nutrients, supports immunity and overall well-being.' },
+  { icon: 'fa-droplet',     title: 'Rich Aroma & Taste',      text: 'Slow-cooked to perfection for a divine aroma and traditional taste.' },
+];
+
+const processSteps = [
+  { num: 1, image: '/assets/gir_sahiwal_farm.png', title: 'Gir Cow Milk',          text: 'We start with fresh, pure A2 Gir cow milk.' },
+  { num: 2, image: '/assets/clay_pot_curd.png',    title: 'Curd',                  text: 'Milk is cultured naturally to prepare curd.' },
+  { num: 3, image: '/assets/craft_bilona.jpg',     title: 'Butter',                text: 'Curd is bilona-churned to obtain rich butter.' },
+  { num: 4, image: '/assets/slow_cooking_ghee.png',title: 'Slow-Cooked Bilona Ghee', text: 'Butter is slow-cooked to create aromatic, golden ghee.' },
+];
+
+const categoryCards = [
+  { id: 'summer',      icon: 'fa-sun',      label: 'Summer Essentials', bg: '#5C2D0A', labelColor: '#3D1F00' },
+  { id: 'membership',  icon: 'fa-gift',     label: 'Membership Deals',  bg: '#75B529', labelColor: '#4D8A1A' },
+  { id: 'newlaunch',   icon: 'fa-box-open', label: 'New Launches',      bg: '#1F5B2B', labelColor: '#BA7517' },
+  { id: 'under499',    icon: 'fa-tag',      label: 'Under ₹499',        bg: '#5C2D0A', labelColor: '#3D1F00', priceTag: '₹499' },
+  { id: 'allproducts', icon: 'fa-jar',      label: 'All Products',      bg: '#75B529', labelColor: '#4D8A1A' },
+  { id: 'under999',    icon: 'fa-tag',      label: 'Under ₹999',        bg: '#1F5B2B', labelColor: '#BA7517', priceTag: '₹999' },
+];
+
+const testimonials = [
+  { name: 'Neha Sharma',   location: 'Bengaluru',  quote: 'The aroma, the taste, the purity — Kesari Royale Ghee takes me back to my grandmother\'s days. Truly authentic!' },
+  { name: 'Rohit Mehta',   location: 'Ahmedabad',  quote: 'You can feel the difference in quality. Perfect for daily use and my family loves the rich, traditional taste.' },
+  { name: 'Priya Desai',   location: 'Mumbai',     quote: 'Finally found ghee that is 100% pure and made the right way. Highly recommended for a healthy lifestyle.' },
+];
+
+function Stars({ rating }) {
+  return (
+    <div className="product-rating">
+      {[1,2,3,4,5].map(i => (
+        <i key={i} className={`fa-${i <= Math.round(rating) ? 'solid' : 'regular'} fa-star`}></i>
+      ))}
+    </div>
+  );
+}
 
 export default function Home({ setPage }) {
   const [heroIdx, setHeroIdx] = useState(0);
-  const [reviewIdx, setReviewIdx] = useState(0);
+  const { dispatch } = useCart();
 
   const prevSlide = () => setHeroIdx(i => (i - 1 + heroSlides.length) % heroSlides.length);
   const nextSlide = () => setHeroIdx(i => (i + 1) % heroSlides.length);
-  const prev = () => setReviewIdx(i => (i - 1 + testimonials.length) % testimonials.length);
-  const next = () => setReviewIdx(i => (i + 1) % testimonials.length);
 
   useEffect(() => {
-    if (window.innerWidth <= 768) return;
-    const timer = setInterval(() => {
-      setHeroIdx(i => (i + 1) % heroSlides.length);
-    }, 5000);
+    const timer = setInterval(() => setHeroIdx(i => (i + 1) % heroSlides.length), 5000);
     return () => clearInterval(timer);
   }, []);
 
   return (
     <section id="home" className="page-view active">
 
-      {/* Hero Carousel */}
+      {/* ── HERO CAROUSEL ── */}
       <section className="hero-carousel">
         {heroSlides.map((slide, idx) => (
           <div
             key={idx}
             className={`hero-slide${heroIdx === idx ? ' active' : ''}`}
-            style={{ backgroundImage: `url(${slide.image})` }}
           >
-            <div className="hero-bg-overlay"></div>
-            <div className="hero-content">
-              <div className="badge-heritage">
-                <i className={`fa-solid ${slide.icon}`}></i> {slide.badge}
-              </div>
-              <h1 className="hero-title">
-                {slide.title} <span className="highlight">{slide.highlight}</span>
-              </h1>
-              <p className="hero-description">{slide.description}</p>
-              <div className="hero-actions">
-                <button onClick={() => setPage(slide.cta1Page)} className="btn btn-primary">
-                  {slide.cta1Label} <i className="fa-solid fa-arrow-right"></i>
-                </button>
-                <button onClick={() => setPage(slide.cta2Page)} className="btn btn-outline">
-                  {slide.cta2Label}
-                </button>
-              </div>
-            </div>
+            <img src={slide.image} alt={slide.alt} className="hero-banner-img" />
           </div>
         ))}
-
         <button className="carousel-arrow carousel-prev" onClick={prevSlide}>
           <i className="fa-solid fa-chevron-left"></i>
         </button>
         <button className="carousel-arrow carousel-next" onClick={nextSlide}>
           <i className="fa-solid fa-chevron-right"></i>
         </button>
-
         <div className="carousel-dots">
           {heroSlides.map((_, idx) => (
-            <button
-              key={idx}
-              className={`carousel-dot${heroIdx === idx ? ' active' : ''}`}
-              onClick={() => setHeroIdx(idx)}
-              aria-label={`Slide ${idx + 1}`}
-            />
+            <button key={idx} className={`carousel-dot${heroIdx === idx ? ' active' : ''}`} onClick={() => setHeroIdx(idx)} aria-label={`Slide ${idx + 1}`} />
           ))}
         </div>
       </section>
 
-      {/* Features */}
-      <section className="features">
-        <div className="section-header text-center">
-          <span className="sub-title">The Three Pillars of Purity</span>
-          <h2 className="section-title">The Vedic Standard</h2>
+      {/* ── CATEGORY CARDS ── */}
+      <section className="cat-section">
+
+        {/* Desktop: static full-width 6-column grid */}
+        <div className="cat-grid">
+          {categoryCards.map(card => (
+            <button key={card.id} className="cat-card" onClick={() => setPage('shop')} aria-label={card.label}>
+              <div className="cat-icon-box" style={{ background: card.bg }}>
+                {card.priceTag
+                  ? <><i className="fa-solid fa-tag"></i><span className="cat-price-text">Under<br />{card.priceTag}</span></>
+                  : <i className={`fa-solid ${card.icon}`}></i>}
+              </div>
+              <span className="cat-label" style={{ color: card.labelColor }}>{card.label}</span>
+            </button>
+          ))}
         </div>
-        <div className="features-grid">
-          {[
-            { icon: 'fa-arrows-spin', title: 'Bilona Method', text: 'We use the bi-directional wooden churn to extract butter from curd, not milk cream, ensuring nutrient density and absolute purity.' },
-            { icon: 'fa-droplet', title: 'Type of Milk', text: 'We source only pure A2 milk from indigenous Sahiwal and Gir cows — breeds proven to produce the original A2 beta-casein protein, free from A1 and easier on digestion.' },
-            { icon: 'fa-box-open', title: 'Small Batch Production', text: 'Every batch of Kesariroyale ghee is crafted in small quantities to ensure hands-on quality control, consistent golden texture, and the rich aroma that large-scale production simply cannot match.' },
-          ].map(f => (
-            <div key={f.title} className="feature-card">
-              <div className="feature-icon"><i className={`fa-solid ${f.icon}`}></i></div>
-              <h3 className="feature-title">{f.title}</h3>
-              <p className="feature-text">{f.text}</p>
+
+        {/* Mobile: auto-scrolling marquee — cards duplicated for seamless infinite loop */}
+        <div className="cat-marquee-wrapper">
+          <div className="cat-marquee-track">
+            {[...categoryCards, ...categoryCards].map((card, i) => (
+              <button key={`mq-${i}`} className="cat-card" onClick={() => setPage('shop')} aria-label={card.label}>
+                <div className="cat-icon-box" style={{ background: card.bg }}>
+                  {card.priceTag
+                    ? <><i className="fa-solid fa-tag"></i><span className="cat-price-text">Under<br />{card.priceTag}</span></>
+                    : <i className={`fa-solid ${card.icon}`}></i>}
+                </div>
+                <span className="cat-label" style={{ color: card.labelColor }}>{card.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+      </section>
+
+      {/* ── MOST LOVED PRODUCT BANNER ── */}
+      <section className="loved-banner">
+        {/* left watermark silhouettes */}
+        <div className="loved-deco loved-deco-left" aria-hidden="true">
+          <i className="fa-solid fa-cow"></i>
+          <i className="fa-solid fa-person"></i>
+        </div>
+        {/* centre watermark silhouettes */}
+        <div className="loved-deco loved-deco-mid" aria-hidden="true">
+          <i className="fa-solid fa-jar"></i>
+          <i className="fa-solid fa-arrows-spin"></i>
+        </div>
+        {/* main content */}
+        <div className="loved-content">
+          <span className="loved-eyebrow">
+            <i className="fa-solid fa-star"></i> Premium Quality
+          </span>
+          <h2 className="loved-title">Most Loved Product</h2>
+        </div>
+        <button className="loved-btn" onClick={() => setPage('shop')}>
+          Shop More <i className="fa-solid fa-arrow-right"></i>
+        </button>
+      </section>
+
+      {/* ── FEATURED PRODUCTS ── */}
+      <section className="home-products">
+        <div className="section-header text-center">
+          <span className="sub-title">Straight from Hanumangarh, Rajasthan</span>
+          <h2 className="section-title">Our Products</h2>
+          <div className="section-divider"><span></span></div>
+        </div>
+        <div className="home-products-grid">
+          {products.map(prod => (
+            <div key={prod.id} className="home-prod-card">
+              <div className="home-prod-img-wrap">
+                <img src={prod.image} alt={prod.title} className="home-prod-img" />
+                {prod.badge && <span className="home-prod-badge">{prod.badge}</span>}
+                {prod.discount && <span className="home-prod-discount">{prod.discount}</span>}
+              </div>
+              <div className="home-prod-body">
+                <h3 className="home-prod-name">{prod.title}</h3>
+                <div className="home-prod-meta">
+                  <Stars rating={prod.rating} />
+                  <span className="home-prod-reviews">({prod.reviewsCount})</span>
+                </div>
+                <p className="home-prod-size"><i className="fa-solid fa-jar"></i> {prod.size}</p>
+                <div className="home-prod-price">
+                  <span className="home-price-current">₹{prod.price.toLocaleString()}</span>
+                  <span className="home-price-old">₹{prod.oldPrice.toLocaleString()}</span>
+                </div>
+              </div>
+              <button className="home-add-cart" onClick={() => dispatch({ type: 'ADD', product: prod })}>
+                <i className="fa-solid fa-cart-plus"></i> Add to Cart
+              </button>
+            </div>
+          ))}
+        </div>
+        <div className="text-center" style={{ marginTop: '32px' }}>
+          <button onClick={() => setPage('shop')} className="btn btn-outline">
+            View All Products <i className="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </section>
+
+      {/* ── WHY KESARI ROYALE ── */}
+      <section className="why-section">
+        <div className="section-header text-center">
+          <h2 className="section-title">Why Kesari Royale?</h2>
+          <div className="section-divider"><span></span></div>
+        </div>
+        <div className="why-grid">
+          {whyItems.map(w => (
+            <div key={w.title} className="why-card">
+              <div className="why-icon"><i className={`fa-solid ${w.icon}`}></i></div>
+              <h4 className="why-title">{w.title}</h4>
+              <p className="why-text">{w.text}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Heritage Split */}
-      <section className="heritage-split">
-        <div className="heritage-visual">
-          <div className="heritage-image-wrapper">
-            <img src="/assets/craft_bilona.jpg" alt="Traditional Vedic Bilona" className="heritage-img" />
-            <div className="heritage-badge">Hanumangarh, Rajasthan</div>
-          </div>
+      {/* ── BILONA PROCESS ── */}
+      <section className="process-section">
+        <div className="section-header text-center">
+          <h2 className="section-title">Our Traditional Bilona Process</h2>
+          <div className="section-divider"><span></span></div>
         </div>
-        <div className="heritage-content">
-          <span className="sub-title">Revived Traditions from Rajasthan's Heart</span>
-          <h2 className="section-title">Sacred, Golden Essence of Ancient Times</h2>
-          <p className="heritage-text">Sourced from the fertile lands of Hanumangarh, Kesariroyale is dedicated to the ancient Bilona method. Unlike commercial ghee made from cream, our process starts with whole A2 milk from indigenous cows.</p>
-          <p className="heritage-text">We set it into curd, churn it with wooden Bilonas, and slow-cook the butter on a controlled flame. This labor-intensive craft preserves the grainy texture and nutty aroma of our heritage.</p>
-          <div className="heritage-tags">
-            <span><i className="fa-solid fa-seedling"></i> 100% Organic</span>
-            <span><i className="fa-solid fa-shield"></i> Lab Certified A2</span>
-            <span><i className="fa-solid fa-temperature-arrow-down"></i> Slow Cooked</span>
-          </div>
-          <button onClick={() => setPage('craft')} className="btn btn-outline">Explore the Traditional Process</button>
+        <div className="process-steps">
+          {processSteps.flatMap((step, i) => {
+            const el = (
+              <div key={step.num} className="process-step">
+                <div className="process-img-wrap">
+                  <img src={step.image} alt={step.title} className="process-img" />
+                  <div className="process-num">{step.num}</div>
+                </div>
+                <h4 className="process-title">{step.title}</h4>
+                <p className="process-text">{step.text}</p>
+              </div>
+            );
+            return i < processSteps.length - 1
+              ? [el, <div key={`arr-${i}`} className="process-arrow"><i className="fa-solid fa-arrow-right"></i></div>]
+              : [el];
+          })}
+        </div>
+        <div className="text-center" style={{ marginTop: '36px' }}>
+          <button onClick={() => setPage('craft')} className="btn btn-outline">
+            Explore Full Process <i className="fa-solid fa-arrow-right"></i>
+          </button>
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="testimonials">
+      {/* ── TESTIMONIALS ── */}
+      <section className="testimonials-section">
         <div className="section-header text-center">
-          <span className="sub-title">Words of Appreciations</span>
-          <h2 className="section-title">Pure Ghee Reviews</h2>
+          <h2 className="section-title">What Our Customers Say</h2>
+          <div className="section-divider"><span></span></div>
         </div>
-        <div className="testimonials-marquee-wrapper">
-          <div className="testimonials-marquee-track">
-            {[...testimonials, ...testimonials].map((t, idx) => (
-              <div key={idx} className="testimonial-card">
-                <div className="stars">{[...Array(5)].map((_, i) => <i key={i} className="fa-solid fa-star"></i>)}</div>
-                <p className="testimonial-quote">"{t.quote}"</p>
-                <div className="testimonial-author">
-                  <div className="author-info">
-                    <span className="author-name">{t.name}</span>
-                    <span className="author-location">{t.location}</span>
-                  </div>
-                  <span className="verified-buyer"><i className="fa-solid fa-circle-check"></i> Verified</span>
+        <div className="testimonials-grid">
+          {testimonials.map(t => (
+            <div key={t.name} className="testi-card">
+              <div className="testi-quote-icon">"</div>
+              <div className="testi-stars">
+                {[...Array(5)].map((_, i) => <i key={i} className="fa-solid fa-star"></i>)}
+              </div>
+              <p className="testi-quote">"{t.quote}"</p>
+              <div className="testi-author">
+                <div className="testi-avatar"><i className="fa-solid fa-user"></i></div>
+                <div>
+                  <span className="testi-name">{t.name}</span>
+                  <span className="testi-location">{t.location}</span>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Banner */}
-      <section className="cta-banner">
-        <div className="cta-overlay"></div>
-        <div className="cta-content">
-          <h2>Bring Vedic Wellness to Your Kitchen</h2>
-          <p>Experience the luxurious aroma and certified nutrition of Hanumangarh's pride. Directly sourced. Safely shipped across India.</p>
-          <button onClick={() => setPage('shop')} className="btn btn-primary btn-large">Shop Purity Now <i className="fa-solid fa-cart-shopping"></i></button>
+            </div>
+          ))}
         </div>
       </section>
 

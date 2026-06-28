@@ -5,6 +5,7 @@ export default function Footer({ setPage }) {
 
   return (
     <footer className="main-footer">
+
       <div className="footer-container">
         <div className="footer-brand">
           <a onClick={() => setPage('home')} className="logo" style={{ cursor: 'pointer' }}>
@@ -71,6 +72,7 @@ export default function Footer({ setPage }) {
           </div>
         </div>
       </div>
+
     </footer>
   );
 }
