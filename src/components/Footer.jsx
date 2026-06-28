@@ -62,6 +62,23 @@ export default function Footer({ setPage }) {
         </div>
       </div>
 
+      {/* Rajasthan landscape — mobile only, fades into footer */}
+      <div className="footer-landscape-mobile">
+        <div className="footer-social-mobile">
+          {[
+            ['fa-brands fa-facebook', 'Facebook', '#'],
+            ['fa-brands fa-instagram', 'Instagram', 'https://www.instagram.com/kesariroyale'],
+            ['fa-brands fa-youtube', 'YouTube', '#'],
+            ['fa-brands fa-whatsapp', 'WhatsApp', 'https://wa.me/919079914464'],
+          ].map(([cls, label, href]) => (
+            <a key={label} href={href} aria-label={label} target="_blank" rel="noopener noreferrer">
+              <i className={cls}></i>
+            </a>
+          ))}
+        </div>
+        <img src="/assets/ChatGPT Image Jun 28, 2026, 02_07_26 PM.png" alt="" aria-hidden="true" />
+      </div>
+
       <div className="footer-bottom">
         <div className="footer-bottom-container">
           <p>&copy; 2026 KESARIROYALE (Hanumangarh, Rajasthan). All rights reserved.</p>

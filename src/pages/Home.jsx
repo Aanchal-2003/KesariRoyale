@@ -133,12 +133,28 @@ export default function Home({ setPage }) {
           <i className="fa-solid fa-jar"></i>
           <i className="fa-solid fa-arrows-spin"></i>
         </div>
-        {/* main content */}
+        {/* main content (desktop) */}
         <div className="loved-content">
           <span className="loved-eyebrow">
             <i className="fa-solid fa-star"></i> Premium Quality
           </span>
           <h2 className="loved-title">Most Loved Product</h2>
+        </div>
+        {/* scrolling marquee (mobile) — full banner content in motion */}
+        <div className="loved-marquee" aria-hidden="true">
+          <div className="loved-marquee-track">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <span key={i} className="loved-marquee-item">
+                <i className="fa-solid fa-cow loved-mq-deco"></i>
+                <i className="fa-solid fa-person loved-mq-deco"></i>
+                <span className="loved-mq-eyebrow"><i className="fa-solid fa-star"></i> Premium Quality</span>
+                <span className="loved-mq-title">Most Loved Product</span>
+                <span className="loved-mq-btn" onClick={() => setPage('shop')}>Shop More <i className="fa-solid fa-arrow-right"></i></span>
+                <i className="fa-solid fa-jar loved-mq-deco"></i>
+                <i className="fa-solid fa-arrows-spin loved-mq-deco"></i>
+              </span>
+            ))}
+          </div>
         </div>
         <button className="loved-btn" onClick={() => setPage('shop')}>
           Shop More <i className="fa-solid fa-arrow-right"></i>
