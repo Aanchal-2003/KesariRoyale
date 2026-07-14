@@ -5,7 +5,7 @@ import { useCart } from '../context/CartContext';
 const heroSlides = [
   { image: '/assets/banner_1.png', alt: 'Shuddhata Ka Waada — Pure A2 Bilona Ghee' },
   { image: '/assets/banner_2.png', alt: 'From Our Tradition To Your Table' },
-  { image: '/assets/banner_3.png', alt: 'Ghar Ki Rasoi, Maa Ka Pyaar' },
+  { image: '/assets/banner_3.jpg', alt: 'Ghar Ki Rasoi, Maa Ka Pyaar' },
 ];
 
 const whyItems = [

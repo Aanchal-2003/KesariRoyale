@@ -1988,17 +1988,21 @@ h1, h2, h3, h4 {
     }
     .journey-card {
         position: absolute;
-        width: calc(50% - 44px);
+        width: calc(50% - 30px);
         padding: 10px 12px;
         border-radius: 10px;
+        translate: 0 -50%;
+    }
+    .journey-card.visible {
+        translate: 0 -50%;
     }
     .jc-right {
-        left: calc(50% + 36px) !important;
+        left: calc(50% + 22px) !important;
         right: auto !important;
         text-align: left !important;
     }
     .jc-left {
-        right: calc(50% + 36px) !important;
+        right: calc(50% + 22px) !important;
         left: auto !important;
         text-align: right !important;
     }
