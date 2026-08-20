@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { Html5Qrcode } from 'html5-qrcode';
 
 export default function QRScannerModal({ isOpen, onClose, onScanSuccess }) {
@@ -205,9 +206,20 @@ export default function QRScannerModal({ isOpen, onClose, onScanSuccess }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, onClose]);
 
+  // Prevent background body scroll while modal is open
+  useEffect(() => {
+    if (isOpen) {
+      const origOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = origOverflow;
+      };
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div className="kr-qr-modal-overlay" onClick={onClose}>
       <div className="kr-qr-modal glass-panel" onClick={(e) => e.stopPropagation()}>
         {/* Modal Header */}
@@ -395,6 +407,7 @@ export default function QRScannerModal({ isOpen, onClose, onScanSuccess }) {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

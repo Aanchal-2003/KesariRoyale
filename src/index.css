@@ -447,7 +447,7 @@ h1, h2, h3, h4 {
 .page-view.active {
     display: block;
     opacity: 1;
-    transform: translateY(0);
+    transform: none;
 }
 
 .section-header {
@@ -4292,28 +4292,40 @@ h1, h2, h3, h4 {
    ========================================================================== */
 .kr-qr-modal-overlay {
     position: fixed;
-    inset: 0;
-    z-index: 9999;
-    background: rgba(15, 23, 42, 0.75);
-    backdrop-filter: blur(8px);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    z-index: 999999;
+    background: rgba(15, 23, 42, 0.78);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 20px;
-    animation: fadeIn 0.25s ease forwards;
+    padding: 16px;
+    margin: 0;
+    box-sizing: border-box;
+    overflow-y: auto;
+    animation: fadeIn 0.2s ease forwards;
 }
 
 .kr-qr-modal {
+    position: relative;
+    margin: auto;
     width: 100%;
-    max-width: 540px;
-    max-height: 92vh;
+    max-width: 520px;
+    max-height: min(92vh, 92dvh);
     background: #ffffff;
     border-radius: var(--radius-lg);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+    box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.45);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .kr-qr-modal-header {

@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { getReportByCode } from '../data/reports';
+import { getReportByCode, extractBatchCode } from '../data/reports';
 import QRScannerModal from '../components/QRScannerModal';
 import OriginalLabCertificate from '../components/OriginalLabCertificate';
 
@@ -42,14 +42,22 @@ export default function Reports() {
         setResult({ type: 'notfound', searchedCode: raw });
       }
       setLoading(false);
-    }, 600);
+    }, 500);
   }, [code]);
 
   const handleScanSuccess = (decodedText) => {
-    setScannedFeedback(`Scanned QR Code: "${decodedText}"`);
-    setCode(decodedText);
+    const cleanCode = extractBatchCode(decodedText) || decodedText;
+    setScannedFeedback(`Scanned Code: "${cleanCode}"`);
+    setCode(cleanCode);
     verify(decodedText);
-    setTimeout(() => setScannedFeedback(null), 4000);
+    setTimeout(() => setScannedFeedback(null), 5000);
+
+    setTimeout(() => {
+      const el = document.getElementById('kr-verification-viewport');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 600);
   };
 
   const mockDownload = () => {
@@ -128,7 +136,7 @@ export default function Reports() {
         )}
 
         {/* Verifier Results Dynamic Viewport */}
-        <div className="verifier-result">
+        <div id="kr-verification-viewport" className="verifier-result">
           {!result && !loading && (
             <div className="result-placeholder">
               <div className="placeholder-icon-circle">
@@ -162,21 +170,27 @@ export default function Reports() {
                 <i className="fa-solid fa-circle-question"></i>
               </div>
               <h4>Batch Code Not Found</h4>
-              <p style={{ maxWidth: 460, margin: '8px auto 20px', fontSize: '0.92rem', color: 'var(--color-gray-600)' }}>
-                We couldn't locate a verified record for "<strong>{result.searchedCode}</strong>". Please ensure the batch code is entered correctly or scan the QR code directly from your jar.
+              <p style={{ maxWidth: 480, margin: '8px auto 20px', fontSize: '0.92rem', color: 'var(--color-gray-600)' }}>
+                We couldn't locate a direct record for "<strong>{result.searchedCode}</strong>". Select one of our accredited batch certificates below or scan your jar again:
               </p>
-              <div style={{ display: 'flex', justifyContent: 'center', gap: 12, flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 10, flexWrap: 'wrap' }}>
                 <button 
                   className="btn btn-primary btn-small" 
-                  onClick={() => setIsScannerOpen(true)}
+                  onClick={() => { setCode('KR-2026-A2'); verify('KR-2026-A2'); }}
                 >
-                  <i className="fa-solid fa-camera"></i> Scan QR Code with Camera
+                  <i className="fa-solid fa-jar"></i> Gir A2 Ghee (KR-2026-A2)
                 </button>
                 <button 
                   className="btn btn-outline btn-small" 
-                  onClick={() => { setCode('KR-2026-A2'); verify('KR-2026-A2'); }}
+                  onClick={() => { setCode('KR-2026-MUSTARD'); verify('KR-2026-MUSTARD'); }}
                 >
-                  Load Demo Gir A2 Report
+                  <i className="fa-solid fa-bottle-droplet"></i> Mustard Oil (KR-2026-MUSTARD)
+                </button>
+                <button 
+                  className="btn btn-outline btn-small" 
+                  onClick={() => { setCode('KR-2026-KESAR'); verify('KR-2026-KESAR'); }}
+                >
+                  <i className="fa-solid fa-spa"></i> Kesar Honey (KR-2026-KESAR)
                 </button>
               </div>
             </div>

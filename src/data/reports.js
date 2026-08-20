@@ -131,23 +131,50 @@ export const batchReports = {
   }
 };
 
-// Aliases mapping report numbers, ULR numbers, or alternate codes to the main batch report
+// Aliases mapping report numbers, ULR numbers, product codes, or alternate strings to the main batch report
 export const batchAliases = {
   'KR-2026-A2': 'KR-2026-A2',
-  'OTHPL/RN-202603525': 'KR-2026-A2',
-  'TC151222600003305F': 'KR-2026-A2',
+  'KR-2026-01': 'KR-2026-A2',
+  'KR-2026-001': 'KR-2026-A2',
+  'KR2026A2': 'KR-2026-A2',
+  'KR-A2': 'KR-2026-A2',
   'A2': 'KR-2026-A2',
   'GHEE': 'KR-2026-A2',
-  'KR-2026-MUSTARD': 'KR-2026-MUSTARD',
-  'OTHPL/RN-202604812': 'KR-2026-MUSTARD',
-  'TC151222600004910F': 'KR-2026-MUSTARD',
-  'MUSTARD': 'KR-2026-MUSTARD',
-  'KR-2026-KESAR': 'KR-2026-KESAR',
-  'SGS/RN-202605110': 'KR-2026-KESAR',
-  'TC587422600008122F': 'KR-2026-KESAR',
-  'KESAR': 'KR-2026-KESAR',
+  'GIR': 'KR-2026-A2',
+  'BILONA': 'KR-2026-A2',
+  'KR-GIR-GHEE-1KG': 'KR-2026-A2',
+  'KR-GIR-GHEE-500G': 'KR-2026-A2',
+  'KR-GIR-GHEE-250G': 'KR-2026-A2',
+  'OTHPL/RN-202603525': 'KR-2026-A2',
+  'OTHPL-RN-202603525': 'KR-2026-A2',
+  'OTHPL/RN/202603525': 'KR-2026-A2',
+  'OTHPL': 'KR-2026-A2',
+  'TC151222600003305F': 'KR-2026-A2',
+  'TC151222600003305': 'KR-2026-A2',
+  '12224027000189': 'KR-2026-A2',
   'SGS-CHEM-7762': 'KR-2026-A2',
-  'NABL-NUTRI-2281': 'KR-2026-A2'
+  'NABL-NUTRI-2281': 'KR-2026-A2',
+
+  'KR-2026-MUSTARD': 'KR-2026-MUSTARD',
+  'KR2026MUSTARD': 'KR-2026-MUSTARD',
+  'KR-MUSTARD': 'KR-2026-MUSTARD',
+  'MUSTARD': 'KR-2026-MUSTARD',
+  'SARSON': 'KR-2026-MUSTARD',
+  'OIL': 'KR-2026-MUSTARD',
+  'OTHPL/RN-202604812': 'KR-2026-MUSTARD',
+  'OTHPL-RN-202604812': 'KR-2026-MUSTARD',
+  'TC151222600004910F': 'KR-2026-MUSTARD',
+
+  'KR-2026-KESAR': 'KR-2026-KESAR',
+  'KR2026KESAR': 'KR-2026-KESAR',
+  'KR-KESAR': 'KR-2026-KESAR',
+  'KESAR': 'KR-2026-KESAR',
+  'HONEY': 'KR-2026-KESAR',
+  'SAFFRON': 'KR-2026-KESAR',
+  'SGS/RN-202605110': 'KR-2026-KESAR',
+  'SGS-RN-202605110': 'KR-2026-KESAR',
+  'TC587422600008122F': 'KR-2026-KESAR',
+  '10014011002231': 'KR-2026-KESAR',
 };
 
 /**
@@ -157,25 +184,35 @@ export function extractBatchCode(rawInput) {
   if (!rawInput) return '';
   let str = String(rawInput).trim();
 
-  // If input is a URL (e.g., https://kesariroyale.com/reports?batch=KR-2026-A2 or /reports?code=...)
+  // 1. If input is a URL (e.g., https://kesariroyale.com/reports?batch=KR-2026-A2 or /reports?code=...)
   try {
-    if (str.includes('http://') || str.includes('https://') || str.includes('?batch=') || str.includes('?code=') || str.includes('?id=')) {
-      const urlObj = new URL(str.startsWith('http') ? str : `https://dummy.com${str.startsWith('/') ? '' : '/'}${str}`);
-      const batchParam = urlObj.searchParams.get('batch') || urlObj.searchParams.get('code') || urlObj.searchParams.get('id');
+    if (str.includes('http://') || str.includes('https://') || str.startsWith('/') || str.includes('kesariroyale.com') || str.includes('kesariroyale')) {
+      const urlObj = new URL(str.startsWith('http') ? str : `https://${str.replace(/^\/+/, '')}`);
+      const batchParam = urlObj.searchParams.get('batch') || 
+                         urlObj.searchParams.get('code') || 
+                         urlObj.searchParams.get('id') ||
+                         urlObj.searchParams.get('b') ||
+                         urlObj.searchParams.get('lot');
       if (batchParam) return batchParam.trim().toUpperCase();
+
       const pathParts = urlObj.pathname.split('/').filter(Boolean);
       if (pathParts.length > 0) {
         const lastPart = pathParts[pathParts.length - 1];
-        if (lastPart && (lastPart.startsWith('KR-') || lastPart.startsWith('OTHPL') || lastPart.startsWith('SGS'))) {
+        if (lastPart && !['reports', 'report', 'shop', 'craft', 'blogs', 'contact', 'cart', 'index.html', 'index'].includes(lastPart.toLowerCase())) {
           return lastPart.toUpperCase();
         }
       }
+
+      // If it's a general URL pointing to kesariroyale.com, default to flagship Gir A2 Ghee report
+      if (urlObj.hostname.includes('kesariroyale') || str.includes('kesariroyale')) {
+        return 'KR-2026-A2';
+      }
     }
   } catch {
-    // If URL parsing fails, continue with string heuristics
+    // If URL parsing fails, continue with heuristics
   }
 
-  // If JSON payload (e.g. {"batch": "KR-2026-A2"})
+  // 2. If JSON payload (e.g. {"batch": "KR-2026-A2"})
   if (str.startsWith('{') && str.endsWith('}')) {
     try {
       const parsed = JSON.parse(str);
@@ -186,6 +223,29 @@ export function extractBatchCode(rawInput) {
     }
   }
 
+  // 3. Regex match for standard batch / report / ULR pattern
+  const krMatch = str.match(/KR[-_ ]?2026[-_ ]?(A2|MUSTARD|KESAR|[A-Z0-9]+)/i);
+  if (krMatch) {
+    const suffix = krMatch[1].toUpperCase();
+    if (suffix === 'A2' || suffix.includes('GHEE')) return 'KR-2026-A2';
+    if (suffix.includes('MUSTARD') || suffix.includes('OIL')) return 'KR-2026-MUSTARD';
+    if (suffix.includes('KESAR') || suffix.includes('HONEY')) return 'KR-2026-KESAR';
+    return `KR-2026-${suffix}`;
+  }
+
+  const othplMatch = str.match(/OTHPL[/-]RN[-_ ]?([0-9]+)/i);
+  if (othplMatch) {
+    return str.toUpperCase();
+  }
+
+  const sgsMatch = str.match(/SGS[/-]RN[-_ ]?([0-9]+)/i);
+  if (sgsMatch) {
+    return str.toUpperCase();
+  }
+
+  // Clean leading labels like "Batch No: ", "B.No: ", "Lot: ", "Code: "
+  str = str.replace(/^(batch\s*(no|num|number)?|b\.?no\.?|lot\s*(no)?|code|qr|id)\s*[:=-]?\s*/i, '').trim();
+
   return str.toUpperCase();
 }
 
@@ -193,32 +253,74 @@ export function extractBatchCode(rawInput) {
  * Resolves a batch report object based on any provided code, URL, or alias
  */
 export function getReportByCode(input) {
-  const code = extractBatchCode(input);
-  if (!code) return null;
+  if (!input) return null;
+  const rawStr = String(input).trim();
+  const code = extractBatchCode(rawStr);
+  const normalized = code.replace(/[^A-Z0-9]/g, '');
 
-  // Direct match
+  // 1. Direct match
   if (batchReports[code]) return { report: batchReports[code], matchedCode: code };
 
-  // Alias match
-  const canonicalId = batchAliases[code];
-  if (canonicalId && batchReports[canonicalId]) {
-    return { report: batchReports[canonicalId], matchedCode: canonicalId };
+  // 2. Direct match on cleaned/normalized key
+  for (const [key, report] of Object.entries(batchReports)) {
+    const keyNorm = key.replace(/[^A-Z0-9]/g, '');
+    if (keyNorm === normalized) return { report, matchedCode: key };
   }
 
-  // Case-insensitive / partial match
-  const directKey = Object.keys(batchReports).find(k => k.toUpperCase() === code);
-  if (directKey) return { report: batchReports[directKey], matchedCode: directKey };
+  // 3. Alias mapping
+  if (batchAliases[code]) {
+    const targetId = batchAliases[code];
+    if (batchReports[targetId]) return { report: batchReports[targetId], matchedCode: targetId };
+  }
 
-  // Check if code is contained inside reportNo or ulrNo
-  const foundReport = Object.values(batchReports).find(r => 
-    r.reportNo?.toUpperCase() === code ||
-    r.ulrNo?.toUpperCase() === code ||
-    r.batchNo?.toUpperCase() === code
-  );
-  if (foundReport) {
-    return { report: foundReport, matchedCode: foundReport.id };
+  // 4. Normalized alias mapping
+  for (const [aliasKey, targetId] of Object.entries(batchAliases)) {
+    if (aliasKey.replace(/[^A-Z0-9]/g, '') === normalized) {
+      if (batchReports[targetId]) return { report: batchReports[targetId], matchedCode: targetId };
+    }
+  }
+
+  // 5. Match inside report properties (reportNo, ulrNo, batchNo, product, fssaiLic)
+  for (const report of Object.values(batchReports)) {
+    if (
+      report.reportNo?.toUpperCase() === code ||
+      report.ulrNo?.toUpperCase() === code ||
+      report.batchNo?.toUpperCase() === code ||
+      report.fssaiLic === code ||
+      (code.length >= 4 && report.reportNo?.toUpperCase().includes(code)) ||
+      (code.length >= 4 && report.ulrNo?.toUpperCase().includes(code))
+    ) {
+      return { report, matchedCode: report.id };
+    }
+  }
+
+  // 6. Heuristic keyword matches for packaging scans & generic text
+  const upperRaw = rawStr.toUpperCase();
+  if (upperRaw.includes('MUSTARD') || upperRaw.includes('SARSON') || upperRaw.includes('OIL')) {
+    return { report: batchReports['KR-2026-MUSTARD'], matchedCode: 'KR-2026-MUSTARD' };
+  }
+  if (upperRaw.includes('KESAR') || upperRaw.includes('HONEY') || upperRaw.includes('SAFFRON')) {
+    return { report: batchReports['KR-2026-KESAR'], matchedCode: 'KR-2026-KESAR' };
+  }
+  if (
+    upperRaw.includes('GHEE') ||
+    upperRaw.includes('BILONA') ||
+    upperRaw.includes('GIR') ||
+    upperRaw.includes('A2') ||
+    upperRaw.includes('KESARI') ||
+    upperRaw.includes('ROYALE') ||
+    upperRaw.includes('12224027000189') ||
+    upperRaw.includes('1KG') ||
+    upperRaw.includes('500G') ||
+    upperRaw.includes('250G')
+  ) {
+    return { report: batchReports['KR-2026-A2'], matchedCode: 'KR-2026-A2' };
+  }
+
+  // 7. Generic short numeric codes / demo codes
+  if (/^(1|01|001|2026|A2|A-2)$/i.test(rawStr.trim())) {
+    return { report: batchReports['KR-2026-A2'], matchedCode: 'KR-2026-A2' };
   }
 
   return null;
 }
-
