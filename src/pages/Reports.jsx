@@ -33,7 +33,7 @@ export default function Reports() {
     setLoading(true);
     setResult(null);
 
-    // Simulated laboratory ledger query
+    // Query laboratory ledger
     setTimeout(() => {
       const match = getReportByCode(raw);
       if (match && match.report) {
@@ -42,7 +42,7 @@ export default function Reports() {
         setResult({ type: 'notfound', searchedCode: raw });
       }
       setLoading(false);
-    }, 500);
+    }, 450);
   }, [code]);
 
   const handleScanSuccess = (decodedText) => {
@@ -57,7 +57,7 @@ export default function Reports() {
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
-    }, 600);
+    }, 550);
   };
 
   const mockDownload = () => {
@@ -78,7 +78,7 @@ export default function Reports() {
         </p>
       </div>
 
-      {/* Verifier Card */}
+      {/* Verifier Search Card */}
       <div className="verifier-card glass-panel">
         <div className="verifier-header-row">
           <div>
@@ -127,89 +127,76 @@ export default function Reports() {
           </button>
         </form>
 
+        {/* Quick Batch Suggestions */}
+        <div className="verifier-quick-chips" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginTop: '14px', paddingTop: '12px', borderTop: '1px solid var(--color-gray-100)' }}>
+          <span style={{ fontSize: '0.8rem', color: 'var(--color-gray-500)', fontWeight: '600' }}>Sample Batches:</span>
+          {[
+            { label: 'Gir A2 Ghee (1kg)', code: 'KR-2026-A2' },
+            { label: 'Gir A2 Ghee (500g)', code: 'KR-2026-500G' },
+            { label: 'Gir A2 Ghee (250g)', code: 'KR-2026-250G' },
+          ].map((b) => (
+            <button
+              key={b.code}
+              type="button"
+              className="btn btn-outline btn-small"
+              style={{ fontSize: '0.76rem', padding: '4px 10px', borderRadius: 'var(--radius-full)' }}
+              onClick={() => { setCode(b.code); verify(b.code); }}
+            >
+              <i className="fa-solid fa-jar"></i> {b.label}
+            </button>
+          ))}
+        </div>
+
         {/* Scanned Toast / Notification */}
         {scannedFeedback && (
           <div className="kr-scan-success-alert">
             <i className="fa-solid fa-circle-check"></i>
-            <span>{scannedFeedback} — Fetching authentic laboratory records...</span>
+            <span>{scannedFeedback} — Authenticating laboratory records...</span>
+          </div>
+        )}
+      </div>
+
+      {/* Verifier Results Viewport */}
+      <div id="kr-verification-viewport" className="verifier-viewport">
+        {!result && !loading && (
+          <div className="result-placeholder glass-panel" style={{ marginTop: '24px', padding: '40px 20px', textAlign: 'center' }}>
+            <div className="placeholder-icon-circle">
+              <i className="fa-solid fa-qrcode"></i>
+            </div>
+            <h4>Awaiting Batch Verification</h4>
+            <p>Click the <strong>Scan QR</strong> camera button above or enter the batch code printed on your Kesari Royale jar to view the authentic laboratory report.</p>
           </div>
         )}
 
-        {/* Verifier Results Dynamic Viewport */}
-        <div id="kr-verification-viewport" className="verifier-result">
-          {!result && !loading && (
-            <div className="result-placeholder">
-              <div className="placeholder-icon-circle">
-                <i className="fa-solid fa-qrcode"></i>
-              </div>
-              <h4>Awaiting Batch Verification</h4>
-              <p>Click the <strong>Scan QR</strong> camera button above or enter the batch code printed on your Kesari Royale jar to view the authentic laboratory report.</p>
+        {loading && (
+          <div className="text-center kr-loading-block glass-panel" style={{ marginTop: '24px', padding: '40px 20px' }}>
+            <div className="kr-spinner-ring">
+              <i className="fa-solid fa-arrows-spin fa-spin"></i>
             </div>
-          )}
+            <h4>Consulting Accredited Laboratory Ledger...</h4>
+            <p>Validating cryptographic hash and retrieving original NABL test certificates</p>
+          </div>
+        )}
 
-          {loading && (
-            <div className="text-center kr-loading-block">
-              <div className="kr-spinner-ring">
-                <i className="fa-solid fa-arrows-spin fa-spin"></i>
-              </div>
-              <h4>Consulting Accredited Laboratory Ledger...</h4>
-              <p>Validating cryptographic hash and retrieving original NABL test certificates</p>
-            </div>
-          )}
+        {result?.type === 'empty' && (
+          <div className="kr-empty-warning glass-panel" style={{ marginTop: '24px' }}>
+            <i className="fa-solid fa-circle-info"></i>
+            <p>Please enter a batch code or use the camera button to scan your bottle's QR code.</p>
+          </div>
+        )}
 
-          {result?.type === 'empty' && (
-            <div className="kr-empty-warning">
-              <i className="fa-solid fa-circle-info"></i>
-              <p>Please enter a batch code or use the camera button to scan your bottle's QR code.</p>
-            </div>
-          )}
-
-          {result?.type === 'notfound' && (
-            <div className="text-center kr-notfound-card">
-              <div className="notfound-icon">
-                <i className="fa-solid fa-circle-question"></i>
-              </div>
-              <h4>Batch Code Not Found</h4>
-              <p style={{ maxWidth: 480, margin: '8px auto 20px', fontSize: '0.92rem', color: 'var(--color-gray-600)' }}>
-                We couldn't locate a direct record for "<strong>{result.searchedCode}</strong>". Select one of our accredited batch certificates below or scan your jar again:
-              </p>
-              <div style={{ display: 'flex', justifyContent: 'center', gap: 10, flexWrap: 'wrap' }}>
-                <button 
-                  className="btn btn-primary btn-small" 
-                  onClick={() => { setCode('KR-2026-A2'); verify('KR-2026-A2'); }}
-                >
-                  <i className="fa-solid fa-jar"></i> Gir A2 Ghee (KR-2026-A2)
-                </button>
-                <button 
-                  className="btn btn-outline btn-small" 
-                  onClick={() => { setCode('KR-2026-MUSTARD'); verify('KR-2026-MUSTARD'); }}
-                >
-                  <i className="fa-solid fa-bottle-droplet"></i> Mustard Oil (KR-2026-MUSTARD)
-                </button>
-                <button 
-                  className="btn btn-outline btn-small" 
-                  onClick={() => { setCode('KR-2026-KESAR'); verify('KR-2026-KESAR'); }}
-                >
-                  <i className="fa-solid fa-spa"></i> Kesar Honey (KR-2026-KESAR)
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Render Full Authentic Laboratory Certificate */}
-          {result?.type === 'found' && (
-            <OriginalLabCertificate 
-              report={result.report} 
-              code={result.code} 
-              onScanAnother={() => setIsScannerOpen(true)}
-              onDownload={mockDownload}
-            />
-          )}
-        </div>
+        {result?.type === 'found' && (
+          <OriginalLabCertificate 
+            report={result.report} 
+            code={result.code} 
+            onScanAnother={() => setIsScannerOpen(true)}
+            onDownload={mockDownload}
+          />
+        )}
       </div>
 
       {/* Summary Laboratory Grid */}
-      <div className="reports-section-header">
+      <div className="reports-section-header" style={{ marginTop: '60px' }}>
         <h3>Archived Laboratory Certifications</h3>
         <p>Comprehensive safety profiles, heavy metal testing, and nutritive certificates</p>
       </div>

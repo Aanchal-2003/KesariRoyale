@@ -55,7 +55,7 @@ export default function OriginalLabCertificate({ report, code, onScanAnother, on
       </div>
 
       {/* Official Certificate Paper Panel */}
-      <div className="kr-cert-paper glass-panel">
+      <div className="kr-cert-paper">
         {/* Certificate Header / Lab Banner */}
         <div className="kr-cert-head">
           <div className="kr-cert-lab-identity">

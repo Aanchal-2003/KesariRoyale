@@ -221,7 +221,7 @@ export default function QRScannerModal({ isOpen, onClose, onScanSuccess }) {
 
   return createPortal(
     <div className="kr-qr-modal-overlay" onClick={onClose}>
-      <div className="kr-qr-modal glass-panel" onClick={(e) => e.stopPropagation()}>
+      <div className="kr-qr-modal" onClick={(e) => e.stopPropagation()}>
         {/* Modal Header */}
         <div className="kr-qr-modal-header">
           <div className="kr-qr-modal-title">
@@ -369,29 +369,29 @@ export default function QRScannerModal({ isOpen, onClose, onScanSuccess }) {
           <div className="kr-quick-samples">
             <div className="kr-samples-label">
               <i className="fa-solid fa-wand-magic-sparkles"></i>
-              <span>Instant Demo Batch QRs (Click to test):</span>
+              <span>Sample Kesari Royale Batches (Click to test):</span>
             </div>
             <div className="kr-sample-chips">
               <button 
                 type="button"
                 className="kr-chip"
-                onClick={() => handleDemoClick('https://kesariroyale.com/reports?batch=KR-2026-A2')}
+                onClick={() => handleDemoClick('KR-2026-A2')}
               >
-                <i className="fa-solid fa-jar"></i> Gir A2 Ghee (KR-2026-A2)
+                <i className="fa-solid fa-jar"></i> Gir A2 Ghee 1kg (KR-2026-A2)
               </button>
               <button 
                 type="button"
                 className="kr-chip"
-                onClick={() => handleDemoClick('https://kesariroyale.com/reports?batch=KR-2026-MUSTARD')}
+                onClick={() => handleDemoClick('KR-2026-500G')}
               >
-                <i className="fa-solid fa-bottle-droplet"></i> Mustard Oil (KR-2026-MUSTARD)
+                <i className="fa-solid fa-jar"></i> Gir A2 Ghee 500gm (KR-2026-500G)
               </button>
               <button 
                 type="button"
                 className="kr-chip"
-                onClick={() => handleDemoClick('https://kesariroyale.com/reports?batch=KR-2026-KESAR')}
+                onClick={() => handleDemoClick('KR-2026-250G')}
               >
-                <i className="fa-solid fa-spa"></i> Kesar Honey (KR-2026-KESAR)
+                <i className="fa-solid fa-jar"></i> Gir A2 Ghee 250gm (KR-2026-250G)
               </button>
             </div>
           </div>
