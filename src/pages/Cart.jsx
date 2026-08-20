@@ -1,9 +1,14 @@
 import { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 
-export default function Cart({ setPage }) {
+export default function Cart() {
   const { cart, dispatch, totalItems, totalPrice } = useCart();
-  const [step, setStep] = useState('cart'); // 'cart' or 'checkout'
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [step, setStep] = useState(() => {
+    return location.state?.directCheckout && cart.length > 0 ? 'checkout' : 'cart';
+  });
   const [form, setForm] = useState({
     name: '',
     phone: '',
@@ -70,7 +75,7 @@ export default function Cart({ setPage }) {
     const errs = {};
     if (!form.name.trim()) errs.name = 'Full name is required';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = 'Valid email required';
-    if (!/^\d{10}$/.test(form.phone.replace(/[\s\-]/g, ''))) errs.phone = 'Valid 10-digit mobile number required';
+    if (!/^\d{10}$/.test(form.phone.replace(/[\s-]/g, ''))) errs.phone = 'Valid 10-digit mobile number required';
     if (!form.address.trim()) errs.address = 'Delivery address is required';
     if (!form.city.trim()) errs.city = 'City is required';
     if (!/^\d{6}$/.test(form.pincode.replace(/\s/g, ''))) errs.pincode = 'Valid 6-digit PIN code required';
@@ -105,7 +110,7 @@ export default function Cart({ setPage }) {
   const closeSuccess = () => {
     setOrderPlaced(false);
     setSubmittedForm(null);
-    setPage('shop');
+    navigate('/shop');
   };
 
   return (
@@ -126,7 +131,7 @@ export default function Cart({ setPage }) {
             <i className="fa-solid fa-bag-shopping empty-icon-large"></i>
             <h2>Your basket is empty</h2>
             <p>Add some authentic A2 Bilona Ghee or cold-pressed oils to experience pure health and taste.</p>
-            <button className="btn btn-primary" onClick={() => setPage('shop')}>Browse Products</button>
+            <button className="btn btn-primary" onClick={() => navigate('/shop')}>Browse Products</button>
           </div>
         ) : (
           <div className="cart-page-layout">
@@ -168,7 +173,7 @@ export default function Cart({ setPage }) {
                 </div>
                 
                 <div className="cart-page-actions">
-                  <button className="btn btn-outline" onClick={() => setPage('shop')}>
+                  <button className="btn btn-outline" onClick={() => navigate('/shop')}>
                     <i className="fa-solid fa-arrow-left"></i> Continue Shopping
                   </button>
                   <button className="btn btn-outline text-red" onClick={() => dispatch({ type: 'CLEAR' })}>

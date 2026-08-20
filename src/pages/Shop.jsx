@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { products } from '../data/products';
 import { useCart } from '../context/CartContext';
 
@@ -21,7 +22,28 @@ function Stars({ rating }) {
 
 export default function Shop() {
   const [filter, setFilter] = useState('all');
-  const { dispatch } = useCart();
+  const [addedId, setAddedId] = useState(null);
+  const { addToCart, dispatch } = useCart();
+  const navigate = useNavigate();
+
+  const handleAddToCart = (prod) => {
+    if (addToCart) {
+      addToCart(prod);
+    } else {
+      dispatch({ type: 'ADD', product: prod });
+    }
+    setAddedId(prod.id);
+    setTimeout(() => setAddedId(null), 2200);
+  };
+
+  const handleBuyNow = (prod) => {
+    if (addToCart) {
+      addToCart(prod);
+    } else {
+      dispatch({ type: 'ADD', product: prod });
+    }
+    navigate('/cart', { state: { directCheckout: true } });
+  };
 
   const visible = filter === 'all' ? products : products.filter(p => p.category === filter);
 
@@ -52,17 +74,37 @@ export default function Shop() {
             <div className="product-info">
               <span className="sub-title">{prod.category.toUpperCase()}</span>
               <h3 className="product-title">{prod.title}</h3>
-              <Stars rating={prod.rating} />
-              <span style={{ fontSize: '0.8rem', color: 'var(--color-gray-600)' }}>({prod.reviewsCount} reviews)</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Stars rating={prod.rating} />
+                <span style={{ fontSize: '0.8rem', color: 'var(--color-gray-600)' }}>({prod.reviewsCount} reviews)</span>
+              </div>
               <p className="product-desc">{prod.description}</p>
+              
               <div className="product-footer">
                 <div className="product-price">
                   <span className="price-regular">₹{prod.price.toLocaleString()}</span>
                   <span className="price-old">₹{prod.oldPrice.toLocaleString()}</span>
                 </div>
-                <button className="add-cart-btn" onClick={() => dispatch({ type: 'ADD', product: prod })} title="Add to Cart">
-                  <i className="fa-solid fa-plus"></i>
-                </button>
+                <div className="shop-prod-actions">
+                  <button 
+                    className={`shop-btn-cart${addedId === prod.id ? ' added' : ''}`} 
+                    onClick={() => handleAddToCart(prod)} 
+                    title="Add to Cart"
+                    aria-label={`Add ${prod.title} to cart`}
+                  >
+                    <i className={addedId === prod.id ? "fa-solid fa-check" : "fa-solid fa-cart-plus"}></i>
+                    <span>{addedId === prod.id ? 'Added!' : 'Add to Cart'}</span>
+                  </button>
+                  <button 
+                    className="shop-btn-buy" 
+                    onClick={() => handleBuyNow(prod)} 
+                    title="Buy Now"
+                    aria-label={`Buy ${prod.title} now`}
+                  >
+                    <i className="fa-solid fa-bolt"></i>
+                    <span>Buy Now</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>

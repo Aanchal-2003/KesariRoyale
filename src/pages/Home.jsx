@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { products } from '../data/products';
 import { useCart } from '../context/CartContext';
 
@@ -48,9 +49,30 @@ function Stars({ rating }) {
   );
 }
 
-export default function Home({ setPage }) {
+export default function Home() {
   const [heroIdx, setHeroIdx] = useState(0);
-  const { dispatch } = useCart();
+  const [addedId, setAddedId] = useState(null);
+  const { addToCart, dispatch } = useCart();
+  const navigate = useNavigate();
+
+  const handleAddToCart = (prod) => {
+    if (addToCart) {
+      addToCart(prod);
+    } else {
+      dispatch({ type: 'ADD', product: prod });
+    }
+    setAddedId(prod.id);
+    setTimeout(() => setAddedId(null), 2200);
+  };
+
+  const handleBuyNow = (prod) => {
+    if (addToCart) {
+      addToCart(prod);
+    } else {
+      dispatch({ type: 'ADD', product: prod });
+    }
+    navigate('/cart', { state: { directCheckout: true } });
+  };
 
   const prevSlide = () => setHeroIdx(i => (i - 1 + heroSlides.length) % heroSlides.length);
   const nextSlide = () => setHeroIdx(i => (i + 1) % heroSlides.length);
@@ -92,7 +114,7 @@ export default function Home({ setPage }) {
         {/* Desktop: static full-width 6-column grid */}
         <div className="cat-grid">
           {categoryCards.map(card => (
-            <button key={card.id} className="cat-card" onClick={() => setPage('shop')} aria-label={card.label}>
+            <button key={card.id} className="cat-card" onClick={() => navigate('/shop')} aria-label={card.label}>
               <div className="cat-icon-box" style={{ background: card.bg }}>
                 {card.priceTag
                   ? <><i className="fa-solid fa-tag"></i><span className="cat-price-text">Under<br />{card.priceTag}</span></>
@@ -107,7 +129,7 @@ export default function Home({ setPage }) {
         <div className="cat-marquee-wrapper">
           <div className="cat-marquee-track">
             {[...categoryCards, ...categoryCards].map((card, i) => (
-              <button key={`mq-${i}`} className="cat-card" onClick={() => setPage('shop')} aria-label={card.label}>
+              <button key={`mq-${i}`} className="cat-card" onClick={() => navigate('/shop')} aria-label={card.label}>
                 <div className="cat-icon-box" style={{ background: card.bg }}>
                   {card.priceTag
                     ? <><i className="fa-solid fa-tag"></i><span className="cat-price-text">Under<br />{card.priceTag}</span></>
@@ -149,14 +171,14 @@ export default function Home({ setPage }) {
                 <i className="fa-solid fa-person loved-mq-deco"></i>
                 <span className="loved-mq-eyebrow"><i className="fa-solid fa-star"></i> Premium Quality</span>
                 <span className="loved-mq-title">Most Loved Product</span>
-                <span className="loved-mq-btn" onClick={() => setPage('shop')}>Shop More <i className="fa-solid fa-arrow-right"></i></span>
+                <span className="loved-mq-btn" onClick={() => navigate('/shop')}>Shop More <i className="fa-solid fa-arrow-right"></i></span>
                 <i className="fa-solid fa-jar loved-mq-deco"></i>
                 <i className="fa-solid fa-arrows-spin loved-mq-deco"></i>
               </span>
             ))}
           </div>
         </div>
-        <button className="loved-btn" onClick={() => setPage('shop')}>
+        <button className="loved-btn" onClick={() => navigate('/shop')}>
           Shop More <i className="fa-solid fa-arrow-right"></i>
         </button>
       </section>
@@ -188,14 +210,29 @@ export default function Home({ setPage }) {
                   <span className="home-price-old">₹{prod.oldPrice.toLocaleString()}</span>
                 </div>
               </div>
-              <button className="home-add-cart" onClick={() => dispatch({ type: 'ADD', product: prod })}>
-                <i className="fa-solid fa-cart-plus"></i> Add to Cart
-              </button>
+              <div className="home-prod-actions">
+                <button 
+                  className={`home-btn-cart${addedId === prod.id ? ' added' : ''}`}
+                  onClick={() => handleAddToCart(prod)}
+                  aria-label={`Add ${prod.title} to cart`}
+                >
+                  <i className={addedId === prod.id ? "fa-solid fa-check" : "fa-solid fa-cart-plus"}></i>
+                  <span>{addedId === prod.id ? 'Added!' : 'Add to Cart'}</span>
+                </button>
+                <button 
+                  className="home-btn-buy" 
+                  onClick={() => handleBuyNow(prod)}
+                  aria-label={`Buy ${prod.title} now`}
+                >
+                  <i className="fa-solid fa-bolt"></i>
+                  <span>Buy Now</span>
+                </button>
+              </div>
             </div>
           ))}
         </div>
         <div className="text-center" style={{ marginTop: '32px' }}>
-          <button onClick={() => setPage('shop')} className="btn btn-outline">
+          <button onClick={() => navigate('/shop')} className="btn btn-outline">
             View All Products <i className="fa-solid fa-arrow-right"></i>
           </button>
         </div>
@@ -242,7 +279,7 @@ export default function Home({ setPage }) {
           })}
         </div>
         <div className="text-center" style={{ marginTop: '36px' }}>
-          <button onClick={() => setPage('craft')} className="btn btn-outline">
+          <button onClick={() => navigate('/craft')} className="btn btn-outline">
             Explore Full Process <i className="fa-solid fa-arrow-right"></i>
           </button>
         </div>

@@ -1,134 +1,272 @@
-import { useState } from 'react';
-import { batchReports } from '../data/reports';
+import { useState, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { getReportByCode } from '../data/reports';
+import QRScannerModal from '../components/QRScannerModal';
+import OriginalLabCertificate from '../components/OriginalLabCertificate';
 
 export default function Reports() {
-  const [code, setCode] = useState('');
-  const [result, setResult] = useState(null);
+  const [searchParams] = useSearchParams();
+  const initialBatch = searchParams.get('batch') || searchParams.get('code') || searchParams.get('id') || '';
+
+  const [code, setCode] = useState(initialBatch);
+  const [result, setResult] = useState(() => {
+    if (initialBatch) {
+      const match = getReportByCode(initialBatch);
+      if (match && match.report) {
+        return { type: 'found', report: match.report, code: match.matchedCode };
+      }
+    }
+    return null;
+  });
   const [loading, setLoading] = useState(false);
   const [downloaded, setDownloaded] = useState(false);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [scannedFeedback, setScannedFeedback] = useState(null);
 
-  const verify = (inputCode) => {
-    const c = (inputCode || code).trim().toUpperCase();
-    if (!c) { setResult({ type: 'empty' }); return; }
+  const verify = useCallback((inputCode) => {
+    const raw = inputCode !== undefined ? inputCode : code;
+    if (!raw || !raw.trim()) {
+      setResult({ type: 'empty' });
+      return;
+    }
+
     setLoading(true);
     setResult(null);
+
+    // Simulated laboratory ledger query
     setTimeout(() => {
-      const report = batchReports[c];
-      setResult(report ? { type: 'found', report, code: c } : { type: 'notfound' });
+      const match = getReportByCode(raw);
+      if (match && match.report) {
+        setResult({ type: 'found', report: match.report, code: match.matchedCode });
+      } else {
+        setResult({ type: 'notfound', searchedCode: raw });
+      }
       setLoading(false);
-    }, 1000);
+    }, 600);
+  }, [code]);
+
+  const handleScanSuccess = (decodedText) => {
+    setScannedFeedback(`Scanned QR Code: "${decodedText}"`);
+    setCode(decodedText);
+    verify(decodedText);
+    setTimeout(() => setScannedFeedback(null), 4000);
   };
 
-  const mockDownload = () => { setDownloaded(true); setTimeout(() => setDownloaded(false), 3500); };
+  const mockDownload = () => {
+    setDownloaded(true);
+    setTimeout(() => setDownloaded(false), 3500);
+  };
 
   return (
     <section id="reports" className="page-view active">
+      {/* Hero Header */}
       <div className="reports-hero">
-        <span className="sub-title">100% Uncompromised Purity</span>
+        <span className="sub-title">
+          <i className="fa-solid fa-shield-halved"></i> 100% Uncompromised Purity
+        </span>
         <h1 className="page-title">Purity Verified & Lab Certified</h1>
-        <p className="page-subtitle">Every batch of Kesari Royale is rigorously tested. Verify yours below.</p>
+        <p className="page-subtitle">
+          Every single batch of Kesari Royale is independently analyzed by NABL accredited food laboratories. Scan your jar's QR code or enter your batch number to inspect the original lab certificate.
+        </p>
       </div>
 
+      {/* Verifier Card */}
       <div className="verifier-card glass-panel">
-        <h3>Trace Your Batch Report</h3>
-        <p>Enter the batch code printed on your bottle (e.g. <strong>KR-2026-A2</strong> or <strong>OTHPL/RN-202603525</strong>)</p>
-        <div className="verifier-form">
-          <input type="text" value={code} onChange={e => setCode(e.target.value)} placeholder="Enter Batch Code or Report No." />
-          <button className="btn btn-primary" onClick={() => verify()}>Verify Report <i className="fa-solid fa-magnifying-glass"></i></button>
+        <div className="verifier-header-row">
+          <div>
+            <h3>Trace & Verify Your Batch</h3>
+            <p>Scan the QR code on your bottle label or enter your batch code (e.g. <strong>KR-2026-A2</strong>, <strong>OTHPL/RN-202603525</strong>)</p>
+          </div>
         </div>
 
+        {/* Verifier Form with Camera Trigger */}
+        <form 
+          className="verifier-form" 
+          onSubmit={(e) => { e.preventDefault(); verify(); }}
+        >
+          <div className="verifier-input-wrapper">
+            <i className="fa-solid fa-barcode verifier-input-icon"></i>
+            <input 
+              type="text" 
+              value={code} 
+              onChange={e => setCode(e.target.value)} 
+              placeholder="Enter Batch Code, Report No., or paste QR URL..." 
+            />
+            {code && (
+              <button 
+                type="button" 
+                className="verifier-input-clear" 
+                onClick={() => setCode('')}
+                title="Clear input"
+              >
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            )}
+          </div>
+
+          <button 
+            type="button"
+            className="btn btn-secondary kr-scan-input-btn"
+            onClick={() => setIsScannerOpen(true)}
+            title="Open Camera QR Scanner"
+          >
+            <i className="fa-solid fa-camera"></i>
+            <span>Scan QR</span>
+          </button>
+
+          <button type="submit" className="btn btn-primary">
+            Verify Report <i className="fa-solid fa-magnifying-glass"></i>
+          </button>
+        </form>
+
+        {/* Scanned Toast / Notification */}
+        {scannedFeedback && (
+          <div className="kr-scan-success-alert">
+            <i className="fa-solid fa-circle-check"></i>
+            <span>{scannedFeedback} — Fetching authentic laboratory records...</span>
+          </div>
+        )}
+
+        {/* Verifier Results Dynamic Viewport */}
         <div className="verifier-result">
           {!result && !loading && (
             <div className="result-placeholder">
-              <i className="fa-solid fa-magnifying-glass-chart"></i>
-              <p>Awaiting batch code... Enter 'KR-2026-A2' to view the verified Omega Test House report.</p>
+              <div className="placeholder-icon-circle">
+                <i className="fa-solid fa-qrcode"></i>
+              </div>
+              <h4>Awaiting Batch Verification</h4>
+              <p>Click the <strong>Scan QR</strong> camera button above or enter the batch code printed on your Kesari Royale jar to view the authentic laboratory report.</p>
             </div>
           )}
+
           {loading && (
-            <div className="text-center" style={{ padding: '40px 0', color: 'var(--color-primary)' }}>
-              <i className="fa-solid fa-arrows-spin fa-spin" style={{ fontSize: '3rem', marginBottom: '16px' }}></i>
-              <p>Contacting laboratory database...</p>
+            <div className="text-center kr-loading-block">
+              <div className="kr-spinner-ring">
+                <i className="fa-solid fa-arrows-spin fa-spin"></i>
+              </div>
+              <h4>Consulting Accredited Laboratory Ledger...</h4>
+              <p>Validating cryptographic hash and retrieving original NABL test certificates</p>
             </div>
           )}
-          {result?.type === 'empty' && <p style={{ color: 'var(--color-primary-dark)', padding: '20px' }}>Please enter a valid batch code.</p>}
+
+          {result?.type === 'empty' && (
+            <div className="kr-empty-warning">
+              <i className="fa-solid fa-circle-info"></i>
+              <p>Please enter a batch code or use the camera button to scan your bottle's QR code.</p>
+            </div>
+          )}
+
           {result?.type === 'notfound' && (
-            <div className="text-center" style={{ padding: '40px 0' }}>
-              <i className="fa-solid fa-circle-question" style={{ fontSize: '4rem', marginBottom: '16px' }}></i>
+            <div className="text-center kr-notfound-card">
+              <div className="notfound-icon">
+                <i className="fa-solid fa-circle-question"></i>
+              </div>
               <h4>Batch Code Not Found</h4>
-              <p style={{ maxWidth: 420, margin: '8px auto 20px', fontSize: '0.9rem', color: 'var(--color-gray-600)' }}>The code you entered does not match any current batch. Try a demo code below.</p>
+              <p style={{ maxWidth: 460, margin: '8px auto 20px', fontSize: '0.92rem', color: 'var(--color-gray-600)' }}>
+                We couldn't locate a verified record for "<strong>{result.searchedCode}</strong>". Please ensure the batch code is entered correctly or scan the QR code directly from your jar.
+              </p>
               <div style={{ display: 'flex', justifyContent: 'center', gap: 12, flexWrap: 'wrap' }}>
-                <button className="btn btn-outline btn-small" onClick={() => { setCode('KR-2026-A2'); verify('KR-2026-A2'); }}>Load Demo Gir A2 Code</button>
-                <button className="btn btn-outline btn-small" onClick={() => { setCode('KR-2026-MUSTARD'); verify('KR-2026-MUSTARD'); }}>Load Demo Mustard Code</button>
+                <button 
+                  className="btn btn-primary btn-small" 
+                  onClick={() => setIsScannerOpen(true)}
+                >
+                  <i className="fa-solid fa-camera"></i> Scan QR Code with Camera
+                </button>
+                <button 
+                  className="btn btn-outline btn-small" 
+                  onClick={() => { setCode('KR-2026-A2'); verify('KR-2026-A2'); }}
+                >
+                  Load Demo Gir A2 Report
+                </button>
               </div>
             </div>
           )}
+
+          {/* Render Full Authentic Laboratory Certificate */}
           {result?.type === 'found' && (
-            <div className="verifier-report-layout">
-              <div className="verification-header">
-                <div className="verified-title"><i className="fa-solid fa-shield-halved"></i><span>{result.report.status}</span></div>
-                <span className="verified-batch-meta">Batch Ref: <strong>{result.code}</strong> | Issue Date: {result.report.date}</span>
-              </div>
-              <div className="report-details-box" style={{ gridColumn: 'span 2' }}>
-                <h4>Product & Origin Audit</h4>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px 40px' }}>
-                  {[['Product Title', result.report.product],['Testing Laboratory', result.report.labName],['Report Number', result.report.reportNo],['Sourcing Location', result.report.location]].map(([l,v]) => (
-                    <div key={l} className="detail-item"><span>{l}</span><strong>{v}</strong></div>
-                  ))}
-                </div>
-              </div>
-              {result.report.hasTable ? (
-                <div className="report-table-box" style={{ gridColumn: 'span 2' }}>
-                  <h4>Chemical Analysis Certificate</h4>
-                  <div className="report-table-wrapper">
-                    <table className="report-table">
-                      <thead><tr><th>S.No.</th><th>Parameter</th><th>Result</th><th>Method</th><th>Limit</th><th>Status</th></tr></thead>
-                      <tbody>
-                        {result.report.parameters.map((p, i) => (
-                          <tr key={i}><td><strong>{i+1}</strong></td><td>{p.name}</td><td><strong>{p.result}</strong></td><td>{p.method}</td><td>{p.limit}</td><td className="pass-badge"><i className="fa-solid fa-circle-check"></i> Complies</td></tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              ) : (
-                <div style={{ gridColumn: 'span 2' }}>
-                  <div className="metric-bar-group"><div className="metric-label-row"><span>Purity Standard</span><span>100% PURITY</span></div><div className="bar-outer"><div className="bar-inner" style={{ width: '100%' }}></div></div></div>
-                  <div className="metric-bar-group" style={{ marginTop: 14 }}><div className="metric-label-row"><span>Fatty Acid Profile</span><span>{result.report.claValue}</span></div><div className="bar-outer"><div className="bar-inner" style={{ width: '99.4%' }}></div></div></div>
-                </div>
-              )}
-              <div className="report-actions">
-                <button className="btn btn-primary btn-small" onClick={mockDownload}><i className="fa-solid fa-arrow-down-to-bracket"></i> Download Full NABL Certificate PDF</button>
-              </div>
-            </div>
+            <OriginalLabCertificate 
+              report={result.report} 
+              code={result.code} 
+              onScanAnother={() => setIsScannerOpen(true)}
+              onDownload={mockDownload}
+            />
           )}
         </div>
+      </div>
+
+      {/* Summary Laboratory Grid */}
+      <div className="reports-section-header">
+        <h3>Archived Laboratory Certifications</h3>
+        <p>Comprehensive safety profiles, heavy metal testing, and nutritive certificates</p>
       </div>
 
       <div className="certificates-grid">
         {[
-          { title: 'Omega Test House Chemical Analysis', no: 'OTHPL/RN-202603525', date: '01/04/2026', lab: 'Omega Test House (NABL Acc.)', desc: 'Official chemical & fat purity analysis. Confirms 99.90% milk fat, 0.08% moisture, 0.0% adulteration.' },
-          { title: 'Pesticide & Chemical Analysis', no: 'SGS-CHEM-7762', date: 'April 2026', lab: 'SGS India Food Safety Laboratory', desc: 'Screened for over 180 pesticides, synthetic preservatives, heavy metals. Results: Not Detected.' },
-          { title: 'Nutritive & Fatty Acid Profile', no: 'NABL-NUTRI-2281', date: 'May 2026', lab: 'NABL Accredited Food Lab', desc: 'Detailed nutritional factsheet verifying High CLA content, Butyric Acid, and Vitamins A, D, E, K.' },
+          { 
+            title: 'Omega Test House Chemical Analysis', 
+            no: 'OTHPL/RN-202603525', 
+            date: '01/04/2026', 
+            lab: 'Omega Test House (NABL ISO/IEC 17025)', 
+            desc: 'Official chemical & fat purity analysis. Confirms 99.90% milk fat, 0.08% moisture, zero adulteration (Baudouin negative).' 
+          },
+          { 
+            title: 'Pesticide & Synthetic Chemical Screen', 
+            no: 'SGS-CHEM-7762', 
+            date: 'April 2026', 
+            lab: 'SGS India Food Safety Laboratory', 
+            desc: 'Screened for over 180 pesticides, heavy metals (Lead, Mercury, Arsenic), synthetic preservatives. Results: Not Detected.' 
+          },
+          { 
+            title: 'Nutritive & Fatty Acid Profile', 
+            no: 'NABL-NUTRI-2281', 
+            date: 'May 2026', 
+            lab: 'NABL Accredited Food Lab', 
+            desc: 'Detailed nutritional factsheet verifying High CLA content, Omega-3 & 6 balance, Butyric Acid, and Fat Soluble Vitamins A, D, E, K.' 
+          },
         ].map(c => (
           <div key={c.no} className="cert-card glass-panel">
             <div className="cert-header">
               <i className="fa-solid fa-file-pdf cert-icon"></i>
-              <div><h4>{c.title}</h4><p>Report No: {c.no}</p></div>
+              <div>
+                <h4>{c.title}</h4>
+                <p>Report No: {c.no}</p>
+              </div>
             </div>
             <div className="cert-meta">
               <span><strong>Tested:</strong> {c.date}</span>
               <span><strong>Lab:</strong> {c.lab}</span>
             </div>
             <p className="cert-desc">{c.desc}</p>
-            <button className="btn btn-outline btn-small" onClick={mockDownload}><i className="fa-solid fa-arrow-down-to-bracket"></i> Download Report</button>
+            <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+              <button 
+                className="btn btn-outline btn-small" 
+                onClick={() => { setCode(c.no); verify(c.no); }}
+              >
+                <i className="fa-solid fa-eye"></i> View Full Audit
+              </button>
+              <button 
+                className="btn btn-primary btn-small" 
+                onClick={mockDownload}
+              >
+                <i className="fa-solid fa-arrow-down-to-bracket"></i> Download PDF
+              </button>
+            </div>
           </div>
         ))}
       </div>
 
+      {/* Interactive QR Scanner Modal */}
+      <QRScannerModal 
+        isOpen={isScannerOpen} 
+        onClose={() => setIsScannerOpen(false)} 
+        onScanSuccess={handleScanSuccess} 
+      />
+
+      {/* Download Notification Toast */}
       {downloaded && (
         <div className="download-notification show">
           <i className="fa-solid fa-file-arrow-down"></i>
-          <span>Lab verification report downloaded successfully!</span>
+          <span>Official NABL lab verification report downloaded successfully!</span>
         </div>
       )}
     </section>

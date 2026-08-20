@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
-export default function Footer({ setPage }) {
+export default function Footer() {
   const [subscribed, setSubscribed] = useState(false);
 
   return (
@@ -8,9 +9,9 @@ export default function Footer({ setPage }) {
 
       <div className="footer-container">
         <div className="footer-brand">
-          <a onClick={() => setPage('home')} className="logo" style={{ cursor: 'pointer' }}>
+          <Link to="/" className="logo">
             <img src="/assets/logo.webp" alt="Kesari Royale" className="logo-img footer-logo-img" />
-          </a>
+          </Link>
           <p className="footer-about-text">Dedicated to reviving Rajasthan's ancient Vedic culinary heritage. Hand-crafting chemical-free, nutrient-dense superfoods through high-integrity Bilona practices.</p>
           <div className="footer-badges">
             <span><i className="fa-solid fa-shield"></i> Premium Quality</span>
@@ -33,8 +34,13 @@ export default function Footer({ setPage }) {
         <div className="footer-links">
           <h4>Quick Shop</h4>
           <ul>
-            {[['ghee','Vedic A2 Ghee'],['oils','Cold-Pressed Oils'],['infusions','Saffron Infusions'],['all','All Selections']].map(([f,l]) => (
-              <li key={f}><a onClick={() => setPage('shop')} style={{ cursor: 'pointer' }}>{l}</a></li>
+            {[
+              { path: '/shop', label: 'Vedic A2 Ghee' },
+              { path: '/shop', label: 'Cold-Pressed Oils' },
+              { path: '/shop', label: 'Saffron Infusions' },
+              { path: '/shop', label: 'All Selections' },
+            ].map((link, idx) => (
+              <li key={idx}><Link to={link.path}>{link.label}</Link></li>
             ))}
           </ul>
         </div>
@@ -42,8 +48,13 @@ export default function Footer({ setPage }) {
         <div className="footer-links">
           <h4>Heritage & Trust</h4>
           <ul>
-            {[['craft','The Bilona Method'],['reports','Purity Lab Reports'],['blogs','Health & Nutrition Blog'],['contact','Contact Farm Care']].map(([p,l]) => (
-              <li key={p}><a onClick={() => setPage(p)} style={{ cursor: 'pointer' }}>{l}</a></li>
+            {[
+              { path: '/craft', label: 'The Bilona Method' },
+              { path: '/reports', label: 'Purity Lab Reports' },
+              { path: '/blogs', label: 'Health & Nutrition Blog' },
+              { path: '/contact', label: 'Contact Farm Care' },
+            ].map((link, idx) => (
+              <li key={idx}><Link to={link.path}>{link.label}</Link></li>
             ))}
           </ul>
         </div>
@@ -83,9 +94,9 @@ export default function Footer({ setPage }) {
         <div className="footer-bottom-container">
           <p>&copy; 2026 KESARIROYALE (Hanumangarh, Rajasthan). All rights reserved.</p>
           <div className="footer-legal">
-            <a onClick={() => setPage('contact')} style={{ cursor: 'pointer' }}>Privacy Policy</a>
-            <a onClick={() => setPage('contact')} style={{ cursor: 'pointer' }}>Terms of Sourcing</a>
-            <a onClick={() => setPage('contact')} style={{ cursor: 'pointer' }}>Shipping & Returns</a>
+            <Link to="/contact">Privacy Policy</Link>
+            <Link to="/contact">Terms of Sourcing</Link>
+            <Link to="/contact">Shipping & Returns</Link>
           </div>
         </div>
       </div>
