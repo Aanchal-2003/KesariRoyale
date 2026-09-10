@@ -1,47 +1,70 @@
 export const batchReports = {
-  'KR-2026-A2': {
-    id: 'KR-2026-A2',
-    batchNo: 'KR-2026-A2',
-    product: 'Kesari Royale Desi Gir A2 Bilona Ghee',
-    productCategory: 'Vedic A2 Bilona Ghee (Clay Pot Churned)',
-    sampleType: 'Pure Indigenous Gir Cow A2 Milk Fat',
-    mfgDate: '28/03/2026',
-    expDate: '27/03/2027',
+  // ---------------------------------------------------------------------------
+  // ORIGINAL NABL LAB REPORT - Omega Test House Pvt. Ltd.
+  // Report No. OTHPL/RN-202608855 | Batch MS21 | Transcribed from the signed
+  // hard-copy certificate issued to Kesari Royale on 07/08/2026.
+  // ---------------------------------------------------------------------------
+  'MS21': {
+    id: 'MS21',
+    batchNo: 'MS21',
+    product: 'Kesari Royale A2 Ghee',
+    productCategory: 'Food and Agricultural Products (Discipline: Chemical)',
+    sampleType: 'Yellow Coloured Viscous Liquid',
+    sampleCode: '26080076',
+    formatNo: 'OTHPL/QC/RF/25',
+    mfgDate: '25/06/2026',
+    expDate: 'NS (Not Specified)',
     labName: 'Omega Test House Pvt. Ltd.',
-    labAccreditation: 'NABL Accredited (ISO/IEC 17025:2017) & FSSAI Recognized Lab',
-    reportNo: 'OTHPL/RN-202603525',
-    ulrNo: 'TC151222600003305F',
-    issueDate: '01/04/2026',
-    testingPeriod: '30/03/2026 to 01/04/2026',
-    sampleReceived: '30/03/2026',
-    sampledBy: 'Sealed Commercial Jar (Kesari Royale Dairy Foods)',
-    quantity: '1000 mL (1 Kg Glass Jar)',
-    location: 'Ward No.5 Pakka Saharana, 24 LLW A, Hanumangarh, Rajasthan - 335513',
-    status: 'VERIFIED 100% PURE & NABL COMPLIANT',
-    authenticityRating: 'Grade A+ Authentic Vedic Ghee',
-    signatory: 'Dr. S. K. Rathore (M.Sc., Ph.D. Dairy Chemistry)',
-    signatoryTitle: 'Chief Quality Analyst & NABL Authorized Signatory',
-    labAddress: 'Plot No. 44, Industrial Area Phase II, Hanumangarh Jn., Rajasthan',
-    fssaiLic: '12224027000189',
-    qrPayload: 'https://kesariroyale.com/reports?batch=KR-2026-A2',
+    labAccreditation: 'An ISO Certified, FSSAI, MoEF & NABL Accredited Laboratory (TC-15122)',
+    labRegNo: 'NABL TC-15122',
+    reportNo: 'OTHPL/RN-202608855',
+    ulrNo: 'TC151222600008180F',
+    issueDate: '07/08/2026',
+    testingPeriod: '05/08/2026 to 07/08/2026',
+    sampleReceived: '04/08/2026',
+    dateOfCompletion: '07/08/2026',
+    sampledBy: 'Customer',
+    referenceToSampling: 'NA',
+    quantity: '500 ml - Condition: Ok',
+    customerName: 'Kesari Royale',
+    location: 'Kesari Royale, Vill. Pakkasaharana, Hanumangarh (Raj.)',
+    registrationNo: 'RAJ.1713/012971',
+    customerLic: '22226003001752',
+    fssaiLic: '22226003001752',
+    environmentalConditions: 'Room Temperature',
+    pageNo: '01 of 01',
+    status: 'VERIFIED - CONFORMS TO FSS REGULATIONS 2011',
+    authenticityRating: 'Genuine Cow Ghee - Baudouin (Vanaspati) Test Negative',
+    opinion: 'The Sample confirms as per the Food Safety & Standard Regulations 2011 with respect to above tests only.',
+    notes: [
+      'The results relate only to item tested.',
+      'The information about the sample provided by customer.',
+      'FSSR - Food Safety and Standard Regulation, NS - Not Specified, NLT - Not less than, NMT - Not more than.'
+    ],
+    signatory: 'Talat Singh',
+    signatoryTitle: 'Quality Manager - Authorized Signatory',
+    reviewedBy: 'Rekha Pareek',
+    reviewedByTitle: 'Technical Manager - Checked / Reviewed by',
+    labAddress: 'Lab: J-889, Sitapura Industrial Area, Jaipur (Raj.) - 302022 | Head Office: 2/60, Malviya Nagar, Jaipur (Raj.) - 302017',
+    qrPayload: 'https://kesariroyale.com/reports?batch=MS21',
+    pdfUrl: '/reports/OTHPL-RN-202608855.pdf',
     hasTable: true,
     summaryHighlights: [
-      { label: 'Milk Fat Purity', value: '99.90%', note: 'FSSAI Min: 99.5%' },
-      { label: 'Moisture Level', value: '0.08%', note: 'FSSAI Max: 0.50%' },
-      { label: 'Vanaspati / Adulteration', value: '0.00% (Negative)', note: 'Baudouin Test Negative' },
-      { label: 'RM Value', value: '32.01', note: 'Authentic Cow Ghee standard (>24)' },
+      { label: 'Milk Fat', value: '99.89 % w/w', note: 'FSSR Limit: NLT 99.50' },
+      { label: 'Moisture', value: '0.097 % w/w', note: 'FSSR Limit: 0.50 Max' },
+      { label: 'Baudouin Test (Vanaspati)', value: 'Negative', note: 'No vegetable / hydrogenated fat detected' },
+      { label: 'Reichert Meissl Value', value: '29.44', note: 'FSSR Limit: NLT 24' },
     ],
     parameters: [
-      { name: 'Moisture Content', result: '0.08 % w/w', method: 'IS 3508:1966', limit: 'Max 0.50 %', status: 'Complies' },
-      { name: 'Milk Fat Purity', result: '99.90 % w/w', method: 'IS 10484-2021', limit: 'Min 99.5 %', status: 'Complies' },
-      { name: 'Butyro Refractometer (BR) at 40°C', result: '42.0', method: 'FSSAI Dairy Manual 2022', limit: '40.0 - 44.0', status: 'Complies' },
-      { name: 'Reichert Meissl (RM) Value', result: '32.01', method: 'IS 3508:1966', limit: 'Min 24.0', status: 'Complies' },
-      { name: 'Free Fatty Acid (FFA as Oleic)', result: '0.30 % w/w', method: 'IS 3508:1966', limit: 'Max 2.00 %', status: 'Complies' },
-      { name: 'Baudouin Test (Vanaspati / Vegetable Fat)', result: 'Negative (Absent)', method: 'FSSAI Dairy Manual 2022', limit: 'Must be Negative', status: 'Complies' },
-      { name: 'Iodine Value', result: '29.77', method: 'IS 3508:1966', limit: '25.0 - 38.0', status: 'Complies' },
-      { name: 'Saponification Value', result: '219.36', method: 'IS 3508:1966', limit: '205 - 235', status: 'Complies' },
-      { name: 'Peroxide Value', result: '0.12 meq O2/kg', method: 'IS 3508:1966', limit: 'Max 0.60 meq', status: 'Complies' },
-      { name: 'Pesticide & Heavy Metal Residue', result: 'Not Detected (<0.001 mg/kg)', method: 'GC-MS / ICP-MS', limit: 'FSSAI 2022 Limit', status: 'Complies' }
+      { name: 'Moisture', result: '0.097 % w/w', method: 'IS 3508:1966', limit: '0.50 Max', status: 'Complies' },
+      { name: 'Milk Fat', result: '99.89 % w/w', method: 'FSSAI Manual of Method of Dairy and Dairy Products - 2022', limit: 'NLT 99.50', status: 'Complies' },
+      { name: 'Butyro Refractometer Reading at 40°C', result: '40.9 (NS)', method: 'FSSAI Manual of Method of Dairy and Dairy Products - 2022', limit: '40 - 44', status: 'Complies' },
+      { name: 'Reichert Meissl Value', result: '29.44 (NS)', method: 'IS 3508:1966', limit: 'NLT 24', status: 'Complies' },
+      { name: 'Polenske Value', result: '0.71 (NA)', method: 'FSSAI Manual of Method of Dairy and Dairy Products - 2022', limit: '0.5 - 2.0', status: 'Complies' },
+      { name: 'Free Fatty Acid as Oleic acid', result: '0.22 % w/w', method: 'IS 3508:1966', limit: 'NMT 2', status: 'Complies' },
+      { name: 'Baudouin Test (Test For Vanaspati Oil)', result: 'Negative (NS)', method: 'FSSAI Manual of Method of Dairy and Dairy Products - 2022', limit: 'Negative', status: 'Complies' },
+      { name: 'Iodine Value', result: '30.53 (NS)', method: 'IS 3508:1966', limit: '25 - 38', status: 'Complies' },
+      { name: 'Saponification Value', result: '224.90 (NS)', method: 'IS 3508:1966', limit: '205 - 235', status: 'Complies' }
     ]
   },
   'KR-2026-MUSTARD': {
@@ -133,27 +156,47 @@ export const batchReports = {
 
 // Aliases mapping report numbers, ULR numbers, product codes, or alternate strings to the main batch report
 export const batchAliases = {
-  'KR-2026-A2': 'KR-2026-A2',
-  'KR-2026-01': 'KR-2026-A2',
-  'KR-2026-001': 'KR-2026-A2',
-  'KR2026A2': 'KR-2026-A2',
-  'KR-A2': 'KR-2026-A2',
-  'A2': 'KR-2026-A2',
-  'GHEE': 'KR-2026-A2',
-  'GIR': 'KR-2026-A2',
-  'BILONA': 'KR-2026-A2',
-  'KR-GIR-GHEE-1KG': 'KR-2026-A2',
-  'KR-GIR-GHEE-500G': 'KR-2026-A2',
-  'KR-GIR-GHEE-250G': 'KR-2026-A2',
-  'OTHPL/RN-202603525': 'KR-2026-A2',
-  'OTHPL-RN-202603525': 'KR-2026-A2',
-  'OTHPL/RN/202603525': 'KR-2026-A2',
-  'OTHPL': 'KR-2026-A2',
-  'TC151222600003305F': 'KR-2026-A2',
-  'TC151222600003305': 'KR-2026-A2',
-  '12224027000189': 'KR-2026-A2',
-  'SGS-CHEM-7762': 'KR-2026-A2',
-  'NABL-NUTRI-2281': 'KR-2026-A2',
+  // Batch MS21 - the original Omega Test House certificate (OTHPL/RN-202608855)
+  'MS21': 'MS21',
+  'MS-21': 'MS21',
+  'MS21A2': 'MS21',
+  'BATCHMS21': 'MS21',
+  'OTHPL/RN-202608855': 'MS21',
+  'OTHPL-RN-202608855': 'MS21',
+  'OTHPL/RN/202608855': 'MS21',
+  '202608855': 'MS21',
+  'OTHPL': 'MS21',
+  'TC151222600008180F': 'MS21',
+  'TC151222600008180': 'MS21',
+  '26080076': 'MS21',
+  '22226003001752': 'MS21',
+  'RAJ.1713/012971': 'MS21',
+  'RAJ1713012971': 'MS21',
+
+  // Legacy / printed jar codes that must resolve to the same ghee certificate
+  'KR-2026-A2': 'MS21',
+  'KR-2026-01': 'MS21',
+  'KR-2026-001': 'MS21',
+  'KR-2026-500G': 'MS21',
+  'KR-2026-250G': 'MS21',
+  'KR-2026-1KG': 'MS21',
+  'KR2026A2': 'MS21',
+  'KR-A2': 'MS21',
+  'A2': 'MS21',
+  'GHEE': 'MS21',
+  'GIR': 'MS21',
+  'BILONA': 'MS21',
+  'KR-GIR-GHEE-1KG': 'MS21',
+  'KR-GIR-GHEE-500G': 'MS21',
+  'KR-GIR-GHEE-250G': 'MS21',
+  'OTHPL/RN-202603525': 'MS21',
+  'OTHPL-RN-202603525': 'MS21',
+  'OTHPL/RN/202603525': 'MS21',
+  'TC151222600003305F': 'MS21',
+  'TC151222600003305': 'MS21',
+  '12224027000189': 'MS21',
+  'SGS-CHEM-7762': 'MS21',
+  'NABL-NUTRI-2281': 'MS21',
 
   'KR-2026-MUSTARD': 'KR-2026-MUSTARD',
   'KR2026MUSTARD': 'KR-2026-MUSTARD',
@@ -177,6 +220,10 @@ export const batchAliases = {
   '10014011002231': 'KR-2026-KESAR',
 };
 
+// The certificate every ghee jar carries, used as the fallback for any scan we
+// cannot otherwise place (printed EAN barcodes, new lot stickers, plain URLs).
+export const DEFAULT_GHEE_BATCH = 'MS21';
+
 function hashString(str) {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
@@ -184,6 +231,26 @@ function hashString(str) {
     hash |= 0;
   }
   return Math.abs(hash);
+}
+
+/**
+ * Product-family detection for free-text scans and packaging strings.
+ * Order matters: the brand name "Kesari" contains "Kesar", so ghee is tested
+ * first and the saffron test is anchored to a whole word.
+ */
+function detectFamily(rawText) {
+  const upper = String(rawText || '').toUpperCase();
+
+  if (/\bGHEE\b|\bBILONA\b|\bGIR\b|\bA2\b|\bMS21\b|22226003001752/.test(upper)) {
+    return 'GHEE';
+  }
+  if (/\bMUSTARD\b|\bSARSON\b|\bKACHI GHANI\b|\bOIL\b/.test(upper)) {
+    return 'MUSTARD';
+  }
+  if (/\bHONEY\b|\bSAFFRON\b|\bKESAR\b|\bMONGRA\b/.test(upper)) {
+    return 'HONEY';
+  }
+  return null;
 }
 
 /**
@@ -214,7 +281,7 @@ export function extractBatchCode(rawInput) {
 
       // If it's a general URL pointing to kesariroyale.com, default to flagship Gir A2 Ghee report
       if (urlObj.hostname.includes('kesariroyale') || str.includes('kesariroyale')) {
-        return 'KR-2026-A2';
+        return DEFAULT_GHEE_BATCH;
       }
     }
   } catch {
@@ -236,7 +303,7 @@ export function extractBatchCode(rawInput) {
   const krMatch = str.match(/KR[-_ ]?2026[-_ ]?(A2|MUSTARD|KESAR|[A-Z0-9]+)/i);
   if (krMatch) {
     const suffix = krMatch[1].toUpperCase();
-    if (suffix === 'A2' || suffix.includes('GHEE')) return 'KR-2026-A2';
+    if (suffix === 'A2' || suffix.includes('GHEE')) return DEFAULT_GHEE_BATCH;
     if (suffix.includes('MUSTARD') || suffix.includes('OIL')) return 'KR-2026-MUSTARD';
     if (suffix.includes('KESAR') || suffix.includes('HONEY')) return 'KR-2026-KESAR';
     return `KR-2026-${suffix}`;
@@ -270,9 +337,9 @@ export function createDynamicReport(code, rawInput) {
     cleanBatch = `KR-2026-LOT${num}`;
   }
 
-  const upper = rawStr.toUpperCase();
-  const isMustard = upper.includes('MUSTARD') || upper.includes('SARSON') || upper.includes('OIL');
-  const isHoney = upper.includes('HONEY') || upper.includes('KESAR') || upper.includes('SAFFRON');
+  const family = detectFamily(rawStr);
+  const isMustard = family === 'MUSTARD';
+  const isHoney = family === 'HONEY';
 
   const seq = (10000 + (hashString(cleanBatch) % 90000)).toString();
 
@@ -300,16 +367,10 @@ export function createDynamicReport(code, rawInput) {
     };
   }
 
-  // Default: Authentic Kesari Royale Gir Cow A2 Bilona Ghee
-  const base = batchReports['KR-2026-A2'];
-  return {
-    ...base,
-    id: cleanBatch,
-    batchNo: cleanBatch,
-    reportNo: `OTHPL/RN-2026${seq}`,
-    ulrNo: `TC1512226000${seq}F`,
-    qrPayload: `https://kesariroyale.com/reports?batch=${cleanBatch}`
-  };
+  // Default: the ghee jar. Every jar in the market carries batch MS21, so we
+  // return that signed certificate verbatim - report/ULR numbers on a real
+  // laboratory document must never be synthesised.
+  return batchReports[DEFAULT_GHEE_BATCH];
 }
 
 /**
@@ -359,26 +420,15 @@ export function getReportByCode(input) {
   }
 
   // 6. Heuristic keyword matches for packaging scans & generic text
-  const upperRaw = rawStr.toUpperCase();
-  if (upperRaw.includes('MUSTARD') || upperRaw.includes('SARSON') || upperRaw.includes('OIL')) {
+  const family = detectFamily(rawStr);
+  if (family === 'GHEE' || /\bKESARI\b|\bROYALE\b|\b1KG\b|\b500G\b|\b250G\b/.test(rawStr.toUpperCase())) {
+    return { report: batchReports[DEFAULT_GHEE_BATCH], matchedCode: DEFAULT_GHEE_BATCH };
+  }
+  if (family === 'MUSTARD') {
     return { report: batchReports['KR-2026-MUSTARD'], matchedCode: 'KR-2026-MUSTARD' };
   }
-  if (upperRaw.includes('KESAR') || upperRaw.includes('HONEY') || upperRaw.includes('SAFFRON')) {
+  if (family === 'HONEY') {
     return { report: batchReports['KR-2026-KESAR'], matchedCode: 'KR-2026-KESAR' };
-  }
-  if (
-    upperRaw.includes('GHEE') ||
-    upperRaw.includes('BILONA') ||
-    upperRaw.includes('GIR') ||
-    upperRaw.includes('A2') ||
-    upperRaw.includes('KESARI') ||
-    upperRaw.includes('ROYALE') ||
-    upperRaw.includes('12224027000189') ||
-    upperRaw.includes('1KG') ||
-    upperRaw.includes('500G') ||
-    upperRaw.includes('250G')
-  ) {
-    return { report: batchReports['KR-2026-A2'], matchedCode: 'KR-2026-A2' };
   }
 
   // 7. Dynamic generation for any newly manufactured batch / unscanned QR code
