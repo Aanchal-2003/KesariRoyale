@@ -23,6 +23,16 @@ export default function OriginalLabCertificate({ report, code, onScanAnother, on
     window.print();
   };
 
+  const handleDownload = () => {
+    // When the signed original is on file, hand over that PDF; otherwise fall
+    // back to whatever the page provides.
+    if (report?.pdfUrl) {
+      window.open(report.pdfUrl, '_blank', 'noopener');
+      return;
+    }
+    onDownload?.();
+  };
+
   const handleCopyLink = () => {
     const url = `${window.location.origin}/reports?batch=${encodeURIComponent(report.batchNo || code)}`;
     navigator.clipboard?.writeText(url);
@@ -63,10 +73,17 @@ export default function OriginalLabCertificate({ report, code, onScanAnother, on
               <i className="fa-solid fa-flask-vial"></i>
             </div>
             <div>
-              <span className="kr-cert-lab-badge">NABL ISO/IEC 17025:2017 ACCREDITED</span>
+              <span className="kr-cert-lab-badge">
+                {report.labAccreditation || 'NABL ISO/IEC 17025:2017 ACCREDITED'}
+              </span>
               <h2>{report.labName}</h2>
               <p className="kr-lab-address">{report.labAddress}</p>
-              <p className="kr-lab-lic">FSSAI Recognition Reg. No: <strong>{report.fssaiLic}</strong></p>
+              {report.labRegNo && (
+                <p className="kr-lab-lic">NABL Accreditation: <strong>{report.labRegNo}</strong></p>
+              )}
+              {report.formatNo && (
+                <p className="kr-lab-lic">Format No: <strong>{report.formatNo}</strong></p>
+              )}
             </div>
           </div>
 
@@ -98,6 +115,18 @@ export default function OriginalLabCertificate({ report, code, onScanAnother, on
             <span className="meta-label">Testing Period</span>
             <strong className="meta-value">{report.testingPeriod}</strong>
           </div>
+          {report.sampleCode && (
+            <div className="kr-meta-cell">
+              <span className="meta-label">Sample Code</span>
+              <strong className="meta-value">{report.sampleCode}</strong>
+            </div>
+          )}
+          {report.pageNo && (
+            <div className="kr-meta-cell">
+              <span className="meta-label">Page No.</span>
+              <strong className="meta-value">{report.pageNo}</strong>
+            </div>
+          )}
         </div>
 
         {/* Product & Sampling Details */}
@@ -132,8 +161,44 @@ export default function OriginalLabCertificate({ report, code, onScanAnother, on
               <span className="info-key">Best Before Date:</span>
               <span className="info-val">{report.expDate}</span>
             </div>
+            {report.sampleType && (
+              <div className="kr-info-row">
+                <span className="info-key">Description:</span>
+                <span className="info-val">{report.sampleType}</span>
+              </div>
+            )}
+            {report.sampleReceived && (
+              <div className="kr-info-row">
+                <span className="info-key">Sample Receiving Date:</span>
+                <span className="info-val">{report.sampleReceived}</span>
+              </div>
+            )}
+            {report.sampledBy && (
+              <div className="kr-info-row">
+                <span className="info-key">Sample Collected By:</span>
+                <span className="info-val">{report.sampledBy}</span>
+              </div>
+            )}
+            {report.environmentalConditions && (
+              <div className="kr-info-row">
+                <span className="info-key">Environmental Conditions:</span>
+                <span className="info-val">{report.environmentalConditions}</span>
+              </div>
+            )}
+            {report.customerLic && (
+              <div className="kr-info-row">
+                <span className="info-key">Customer FSSAI Lic. No:</span>
+                <span className="info-val">{report.customerLic}</span>
+              </div>
+            )}
+            {report.registrationNo && (
+              <div className="kr-info-row">
+                <span className="info-key">Lab Registration No:</span>
+                <span className="info-val">{report.registrationNo}</span>
+              </div>
+            )}
             <div className="kr-info-row full-width">
-              <span className="info-key">Sourcing & Processing Unit:</span>
+              <span className="info-key">Customer Name & Address:</span>
               <span className="info-val">{report.location}</span>
             </div>
           </div>
@@ -199,6 +264,24 @@ export default function OriginalLabCertificate({ report, code, onScanAnother, on
           </div>
         )}
 
+        {/* Opinion & Statutory Notes */}
+        {(report.opinion || report.notes) && (
+          <div className="kr-cert-section kr-cert-opinion">
+            {report.opinion && (
+              <p className="kr-opinion-line">
+                <strong>Opinion:</strong> {report.opinion}
+              </p>
+            )}
+            {report.notes && report.notes.length > 0 && (
+              <ol className="kr-cert-notes">
+                {report.notes.map((n, i) => (
+                  <li key={i}>{n}</li>
+                ))}
+              </ol>
+            )}
+          </div>
+        )}
+
         {/* Signature & Seal Footer */}
         <div className="kr-cert-signatures">
           <div className="kr-sign-box">
@@ -209,9 +292,20 @@ export default function OriginalLabCertificate({ report, code, onScanAnother, on
             </div>
             <div className="kr-lab-seal-text">
               <strong>OFFICIAL LABORATORY SEAL</strong>
-              <span>Omega / SGS Analytical Quality Assurance</span>
+              <span>{report.labName} — Analytical Quality Assurance</span>
             </div>
           </div>
+
+          {report.reviewedBy && (
+            <div className="kr-sign-box kr-sign-auth">
+              <div className="kr-digital-signature">
+                <em>{report.reviewedBy}</em>
+              </div>
+              <div className="kr-sign-line"></div>
+              <strong>{report.reviewedBy}</strong>
+              <span className="text-small text-muted">{report.reviewedByTitle}</span>
+            </div>
+          )}
 
           <div className="kr-sign-box kr-sign-auth">
             <div className="kr-digital-signature">
@@ -225,7 +319,7 @@ export default function OriginalLabCertificate({ report, code, onScanAnother, on
 
         {/* Actions Bar */}
         <div className="kr-cert-actions">
-          <button className="btn btn-primary" onClick={onDownload}>
+          <button className="btn btn-primary" onClick={handleDownload}>
             <i className="fa-solid fa-file-arrow-down"></i> Download Verified PDF Report
           </button>
           <button className="btn btn-outline" onClick={handlePrint}>

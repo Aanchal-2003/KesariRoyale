@@ -83,7 +83,7 @@ export default function Reports() {
         <div className="verifier-header-row">
           <div>
             <h3>Trace & Verify Your Batch</h3>
-            <p>Scan the QR code on your bottle label or enter your batch code (e.g. <strong>KR-2026-A2</strong>, <strong>OTHPL/RN-202603525</strong>)</p>
+            <p>Scan the QR code or barcode on your jar label, or enter your batch code (e.g. <strong>MS21</strong>, <strong>OTHPL/RN-202608855</strong>)</p>
           </div>
         </div>
 
@@ -119,7 +119,7 @@ export default function Reports() {
             title="Open Camera QR Scanner"
           >
             <i className="fa-solid fa-camera"></i>
-            <span>Scan QR</span>
+            <span>Scan QR / Barcode</span>
           </button>
 
           <button type="submit" className="btn btn-primary">
@@ -131,9 +131,9 @@ export default function Reports() {
         <div className="verifier-quick-chips" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginTop: '14px', paddingTop: '12px', borderTop: '1px solid var(--color-gray-100)' }}>
           <span style={{ fontSize: '0.8rem', color: 'var(--color-gray-500)', fontWeight: '600' }}>Sample Batches:</span>
           {[
-            { label: 'Gir A2 Ghee (1kg)', code: 'KR-2026-A2' },
-            { label: 'Gir A2 Ghee (500g)', code: 'KR-2026-500G' },
-            { label: 'Gir A2 Ghee (250g)', code: 'KR-2026-250G' },
+            { label: 'A2 Ghee — Batch MS21', code: 'MS21' },
+            { label: 'Report No. OTHPL/RN-202608855', code: 'OTHPL/RN-202608855' },
+            { label: 'ULR TC151222600008180F', code: 'TC151222600008180F' },
           ].map((b) => (
             <button
               key={b.code}
@@ -164,7 +164,7 @@ export default function Reports() {
               <i className="fa-solid fa-qrcode"></i>
             </div>
             <h4>Awaiting Batch Verification</h4>
-            <p>Click the <strong>Scan QR</strong> camera button above or enter the batch code printed on your Kesari Royale jar to view the authentic laboratory report.</p>
+            <p>Click the <strong>Scan QR / Barcode</strong> camera button above or enter the batch code printed on your Kesari Royale jar to view the authentic laboratory report.</p>
           </div>
         )}
 
@@ -203,26 +203,13 @@ export default function Reports() {
 
       <div className="certificates-grid">
         {[
-          { 
-            title: 'Omega Test House Chemical Analysis', 
-            no: 'OTHPL/RN-202603525', 
-            date: '01/04/2026', 
-            lab: 'Omega Test House (NABL ISO/IEC 17025)', 
-            desc: 'Official chemical & fat purity analysis. Confirms 99.90% milk fat, 0.08% moisture, zero adulteration (Baudouin negative).' 
-          },
-          { 
-            title: 'Pesticide & Synthetic Chemical Screen', 
-            no: 'SGS-CHEM-7762', 
-            date: 'April 2026', 
-            lab: 'SGS India Food Safety Laboratory', 
-            desc: 'Screened for over 180 pesticides, heavy metals (Lead, Mercury, Arsenic), synthetic preservatives. Results: Not Detected.' 
-          },
-          { 
-            title: 'Nutritive & Fatty Acid Profile', 
-            no: 'NABL-NUTRI-2281', 
-            date: 'May 2026', 
-            lab: 'NABL Accredited Food Lab', 
-            desc: 'Detailed nutritional factsheet verifying High CLA content, Omega-3 & 6 balance, Butyric Acid, and Fat Soluble Vitamins A, D, E, K.' 
+          {
+            title: 'Omega Test House — A2 Ghee Chemical Analysis',
+            no: 'OTHPL/RN-202608855',
+            date: '07/08/2026',
+            lab: 'Omega Test House Pvt. Ltd. (NABL TC-15122)',
+            desc: 'Signed chemical analysis of batch MS21. Milk Fat 99.89%, Moisture 0.097%, Baudouin (vanaspati) test Negative — conforms to FSS Regulations 2011.',
+            pdf: '/reports/OTHPL-RN-202608855.pdf',
           },
         ].map(c => (
           <div key={c.no} className="cert-card glass-panel">
@@ -247,7 +234,7 @@ export default function Reports() {
               </button>
               <button 
                 className="btn btn-primary btn-small" 
-                onClick={mockDownload}
+                onClick={() => (c.pdf ? window.open(c.pdf, '_blank', 'noopener') : mockDownload())}
               >
                 <i className="fa-solid fa-arrow-down-to-bracket"></i> Download PDF
               </button>

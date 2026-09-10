@@ -1,6 +1,24 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { Html5Qrcode } from 'html5-qrcode';
+import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
+
+// The jar carries a printed 1D barcode alongside the QR, so the reader has to
+// accept both families explicitly.
+const SUPPORTED_FORMATS = [
+  Html5QrcodeSupportedFormats.QR_CODE,
+  Html5QrcodeSupportedFormats.DATA_MATRIX,
+  Html5QrcodeSupportedFormats.AZTEC,
+  Html5QrcodeSupportedFormats.PDF_417,
+  Html5QrcodeSupportedFormats.EAN_13,
+  Html5QrcodeSupportedFormats.EAN_8,
+  Html5QrcodeSupportedFormats.UPC_A,
+  Html5QrcodeSupportedFormats.UPC_E,
+  Html5QrcodeSupportedFormats.CODE_128,
+  Html5QrcodeSupportedFormats.CODE_39,
+  Html5QrcodeSupportedFormats.CODE_93,
+  Html5QrcodeSupportedFormats.ITF,
+  Html5QrcodeSupportedFormats.CODABAR,
+];
 
 export default function QRScannerModal({ isOpen, onClose, onScanSuccess }) {
   const [activeTab, setActiveTab] = useState('camera'); // 'camera' | 'upload'
@@ -49,15 +67,21 @@ export default function QRScannerModal({ isOpen, onClose, onScanSuccess }) {
     try {
       await stopCamera();
       
-      const html5QrCode = new Html5Qrcode(qrContainerId);
+      const html5QrCode = new Html5Qrcode(qrContainerId, {
+        formatsToSupport: SUPPORTED_FORMATS,
+        useBarCodeDetectorIfSupported: true,
+        verbose: false,
+      });
       scannerRef.current = html5QrCode;
 
       const config = {
         fps: 15,
+        // Wide box: a square crop clips the ends of the jar's 1D barcode, which
+        // is what makes those scans fail.
         qrbox: (viewfinderWidth, viewfinderHeight) => {
-          const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
-          const size = Math.floor(minEdge * 0.72);
-          return { width: Math.max(200, size), height: Math.max(200, size) };
+          const width = Math.max(200, Math.floor(viewfinderWidth * 0.85));
+          const height = Math.max(160, Math.floor(viewfinderHeight * 0.55));
+          return { width, height };
         },
         aspectRatio: 1.0,
       };
@@ -179,7 +203,11 @@ export default function QRScannerModal({ isOpen, onClose, onScanSuccess }) {
 
     try {
       if (!fileScannerRef.current) {
-        fileScannerRef.current = new Html5Qrcode('kr-qr-file-reader');
+        fileScannerRef.current = new Html5Qrcode('kr-qr-file-reader', {
+          formatsToSupport: SUPPORTED_FORMATS,
+          useBarCodeDetectorIfSupported: true,
+          verbose: false,
+        });
       }
       const decodedText = await fileScannerRef.current.scanFile(file, true);
       setIsProcessingFile(false);
@@ -229,8 +257,8 @@ export default function QRScannerModal({ isOpen, onClose, onScanSuccess }) {
               <i className="fa-solid fa-camera"></i>
             </div>
             <div>
-              <h3>Scan Batch QR Code</h3>
-              <p>Scan the QR on your bottle to verify laboratory authenticity</p>
+              <h3>Scan Batch QR / Barcode</h3>
+              <p>Scan the QR code or the printed barcode on your jar to open its laboratory certificate</p>
             </div>
           </div>
           <button className="kr-qr-modal-close" onClick={onClose} aria-label="Close scanner">
@@ -250,7 +278,7 @@ export default function QRScannerModal({ isOpen, onClose, onScanSuccess }) {
             className={`kr-qr-tab-btn ${activeTab === 'upload' ? 'active' : ''}`}
             onClick={() => setActiveTab('upload')}
           >
-            <i className="fa-solid fa-image"></i> Upload QR Photo
+            <i className="fa-solid fa-image"></i> Upload QR / Barcode Photo
           </button>
         </div>
 
@@ -291,7 +319,7 @@ export default function QRScannerModal({ isOpen, onClose, onScanSuccess }) {
                         <div className="kr-scan-laser"></div>
                       </div>
                       <p className="kr-scan-instruction">
-                        Position the bottle's QR code within the golden frame
+                        Position the jar's QR code or barcode within the golden frame
                       </p>
                     </div>
                   )}
@@ -342,8 +370,8 @@ export default function QRScannerModal({ isOpen, onClose, onScanSuccess }) {
                 <div className="kr-dropzone-icon">
                   <i className="fa-solid fa-cloud-arrow-up"></i>
                 </div>
-                <h4>Choose or Drop a QR Code Image</h4>
-                <p>Upload a screenshot or photo of the QR code from your Kesari Royale packaging</p>
+                <h4>Choose or Drop a QR / Barcode Image</h4>
+                <p>Upload a screenshot or photo of the QR code or barcode from your Kesari Royale packaging</p>
                 <button className="btn btn-outline btn-small" type="button">
                   <i className="fa-solid fa-folder-open"></i> Browse Files
                 </button>
@@ -375,23 +403,23 @@ export default function QRScannerModal({ isOpen, onClose, onScanSuccess }) {
               <button 
                 type="button"
                 className="kr-chip"
-                onClick={() => handleDemoClick('KR-2026-A2')}
+                onClick={() => handleDemoClick('MS21')}
               >
-                <i className="fa-solid fa-jar"></i> Gir A2 Ghee 1kg (KR-2026-A2)
+                <i className="fa-solid fa-jar"></i> A2 Ghee — Batch MS21
               </button>
               <button 
                 type="button"
                 className="kr-chip"
-                onClick={() => handleDemoClick('KR-2026-500G')}
+                onClick={() => handleDemoClick('OTHPL/RN-202608855')}
               >
-                <i className="fa-solid fa-jar"></i> Gir A2 Ghee 500gm (KR-2026-500G)
+                <i className="fa-solid fa-file-lines"></i> Report No. OTHPL/RN-202608855
               </button>
               <button 
                 type="button"
                 className="kr-chip"
-                onClick={() => handleDemoClick('KR-2026-250G')}
+                onClick={() => handleDemoClick('TC151222600008180F')}
               >
-                <i className="fa-solid fa-jar"></i> Gir A2 Ghee 250gm (KR-2026-250G)
+                <i className="fa-solid fa-barcode"></i> ULR TC151222600008180F
               </button>
             </div>
           </div>

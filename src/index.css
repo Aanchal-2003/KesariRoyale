@@ -5156,6 +5156,34 @@ h1, h2, h3, h4 {
     border-radius: 4px;
 }
 
+/* Opinion & Statutory Notes */
+.kr-cert-opinion {
+    background: var(--color-gray-50, #fafaf9);
+    border-left: 3px solid var(--color-primary);
+    border-radius: 6px;
+    padding: 16px 18px;
+    margin-top: 28px;
+}
+
+.kr-opinion-line {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--color-gray-700, #3f3f46);
+}
+
+.kr-cert-notes {
+    margin: 10px 0 0;
+    padding-left: 18px;
+    font-size: 0.8rem;
+    line-height: 1.6;
+    color: var(--color-gray-500, #71717a);
+}
+
+.kr-cert-notes li + li {
+    margin-top: 3px;
+}
+
 /* Signatures & Seal Footer */
 .kr-cert-signatures {
     display: flex;
